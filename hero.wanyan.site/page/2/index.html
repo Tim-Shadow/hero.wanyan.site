@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Shadow如寒灬的个人博客">
+<meta property="og:url" content="https://tim-shadow.github.io/hero.wanyan.site/hero.wanyan.site/page/2/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shadow如寒灬的个人博客">
+  
+    <link rel="alternate" href="/hero.wanyan.site/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/avatar1.jpeg">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/hero.wanyan.site/css/style.css">
+  <link rel="stylesheet" href="/hero.wanyan.site/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" style="background-image: url(/images/avatar1.jpeg)" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/hero.wanyan.site/" title>首页</a>
+      
+        <a class="nav-item" href="/hero.wanyan.site/archives" title>归档</a>
+      
+        <a class="nav-item" href="/hero.wanyan.site/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/hero.wanyan.site/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main">
+  
+    <article id="post-Ionic深入详解/2018-12-20-Ionic框架结构" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/12/20/Ionic深入详解/2018-12-20-Ionic框架结构/">Ionic框架结构</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/12/20/Ionic深入详解/2018-12-20-Ionic框架结构/" class="article-date">
+  <time datetime="2018-12-19T16:00:00.000Z" itemprop="datePublished">2018-12-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="Ionic框架结构"><a href="#Ionic框架结构" class="headerlink" title="Ionic框架结构"></a>Ionic框架结构</h1><h2 id="初始化Component的ViewController"><a href="#初始化Component的ViewController" class="headerlink" title="初始化Component的ViewController"></a>初始化<code>Component</code>的<code>ViewController</code></h2><ol>
+<li>Ionic <code>AppModule</code>中，<code>IonicModule.forRoot()</code>方法传入的<code>DeepLinkMetadata</code>或是由<code>@IonicPage</code>在编译阶段解析得到的 <code>IonicPageMetadata</code>，将其统一转换成<code>NavLink</code>的对象的列表</li>
+<li>由对应的名称在<code>NavLink</code>的对象列表中找到对应的<code>NavLink</code></li>
+<li>如果<code>NavLink</code>中存在<code>link.component</code>属性，那么由此属性进行解析，一般此属性为对应的<code>component</code>的构造方法，否则由<code>link.loadChildren</code>对应url动态加载（用到了SystemJs等相关的技术，然后使用Angular的技术）</li>
+<li>通过页面所在模块中<code>IonicPageModule.forChild()</code>方法中参数拿到对应的<code>component</code>的构造方法</li>
+<li>再将<code>component</code>传入<code>ViewController</code>中(<font color="red">注意此时<code>component</code>并未实例化，其实例化是在导航的页面中插入的时候，被Angular动态创建出来</font>)</li>
+<li>以<code>ViewController</code>为载体进行初始化。</li>
+<li>Angular动态创建组件</li>
+<li>呈现到页面
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/12/20/Ionic深入详解/2018-12-20-Ionic框架结构/#more">阅读全文</a>
+          </p>
+        
+      
+    </li></ol></div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-Ionic深入详解/2018-12-14-Ionic DeepLink" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/12/14/Ionic深入详解/2018-12-14-Ionic DeepLink/">Ionic DeepLink</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/12/14/Ionic深入详解/2018-12-14-Ionic DeepLink/" class="article-date">
+  <time datetime="2018-12-13T16:00:00.000Z" itemprop="datePublished">2018-12-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p><a href="[https://angular.cn/api/common/Location]">Angular Location</a></p>
+<ol>
+<li><p>url是当前url<br> 即历史栈中最后一个，因为当前url即栈中最后一个url  </p>
+</li>
+<li><p>url是前一个url<br> 即历史栈中倒是第二个</p>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/12/14/Ionic深入详解/2018-12-14-Ionic DeepLink/#more">阅读全文</a>
+          </p>
+        
+      
+    </li></ol></div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-Ionic深入详解/2018-12-13-Ionic页面循环" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/12/13/Ionic深入详解/2018-12-13-Ionic页面循环/">Ionic页面循环</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/12/13/Ionic深入详解/2018-12-13-Ionic页面循环/" class="article-date">
+  <time datetime="2018-12-12T16:00:00.000Z" itemprop="datePublished">2018-12-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <ol>
+<li>Ionic页面操作（push、pop、insert、remove、set）
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/12/13/Ionic深入详解/2018-12-13-Ionic页面循环/#more">阅读全文</a>
+          </p>
+        
+      
+    </li></ol></div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-11-26-IONIC" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/11/26/2018-11-26-IONIC/">IONIC</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/11/26/2018-11-26-IONIC/" class="article-date">
+  <time datetime="2018-11-25T16:00:00.000Z" itemprop="datePublished">2018-11-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/原理理解/">原理理解</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>因为Angular的双向绑定机制的缘故，其重写了js中的很多的默认行为：</p>
+<ol>
+<li><code>setTimeOut()</code></li>
+<li><code>clearTimeOut()</code>  </li>
+<li><code>setInterval()</code>  </li>
+<li><code>clearInterval()</code>  </li>
+<li><code>addEventListener()</code></li>
+<li><code>removeEventListener()</code></li>
+<li>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/11/26/2018-11-26-IONIC/#more">阅读全文</a>
+          </p>
+        
+      
+    </li></ol></div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-10-18-IOS GCD" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/10/18/2018-10-18-IOS GCD/">IOS GCD</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/10/18/2018-10-18-IOS GCD/" class="article-date">
+  <time datetime="2018-10-17T16:00:00.000Z" itemprop="datePublished">2018-10-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/IOS/">IOS</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/gcd/">gcd</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ios/">ios</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>GCD是在你程序中执行异步或者同步的任务的一种简单方式</p>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/10/18/2018-10-18-IOS GCD/#more">阅读全文</a>
+          </p>
+        
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-10-15-Chrome Javascritp调试技巧" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/10/15/2018-10-15-Chrome Javascritp调试技巧/">Chrome Javascritp调试技巧</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/10/15/2018-10-15-Chrome Javascritp调试技巧/" class="article-date">
+  <time datetime="2018-10-14T16:00:00.000Z" itemprop="datePublished">2018-10-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/技巧/">技巧</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/javascript/">javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/技巧/">技巧</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <ol>
+<li><code>debugger;</code><br><code>debugger</code><br>可以将其写入代码，Chrome 运行的时候就会自动自动停在那。<br>例如：</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (something) &#123;</span><br><span class="line">	<span class="keyword">debugger</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/10/15/2018-10-15-Chrome Javascritp调试技巧/#more">阅读全文</a>
+          </p>
+        
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-10-12-IOS Runtime机制" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/10/12/2018-10-12-IOS Runtime机制/">IOS Runtime机制</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/10/12/2018-10-12-IOS Runtime机制/" class="article-date">
+  <time datetime="2018-10-11T16:00:00.000Z" itemprop="datePublished">2018-10-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/IOS/">IOS</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/ios/">ios</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>IOS Runtime机制</p>
+<p>runtime机制最主要的是了解OC底层的原理、一些主要的数据结构。objective本质上是需要被编译为c/c++的，根据c/c++的一些结构体，指针，链表等方向会帮助我们更好的了解它的runtime机制<br>
+        
+          </p><p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/10/12/2018-10-12-IOS Runtime机制/#more">阅读全文</a>
+          </p>
+        
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-10-11-IOS版微信cordova插件——详细剖析" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/">IOS版微信cordova插件——详细剖析</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/" class="article-date">
+  <time datetime="2018-10-10T16:00:00.000Z" itemprop="datePublished">2018-10-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/wechat/">wechat</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h3 id="步骤二"><a href="#步骤二" class="headerlink" title="步骤二"></a>步骤二</h3><ul>
+<li>微信步骤：  <blockquote>
+<p>[2] 将SDK文件中包含的 libWeChatSDK.a，WXApi.h，WXApiObject.h 三个文件添加到你所建的工程中（如下图所示，建立了一个名为Test 的工程，并把以上三个文件添加到Test文件夹下）。<br>(注：请使用xCode4.5及以上版本)<br><img src="./wyD7ylTtc-I1U4SKWJkQqc6kJUlz_sEtEDqlnJbj1M-12H2_NFqPzphSDfoGKbTZ.png" alt="图片">  </p>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/#more">阅读全文</a>
+          </p>
+        
+      
+    </blockquote></li></ul></div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-8-23-多平台开发" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/08/23/2018-8-23-多平台开发/">多平台开发</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/08/23/2018-8-23-多平台开发/" class="article-date">
+  <time datetime="2018-08-22T16:00:00.000Z" itemprop="datePublished">2018-08-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/移动前端/其他/">其他</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/其他/">其他</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:left">Android</th>
+<th style="text-align:left">IOS</th>
+<th style="text-align:left">Ionic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">UI刷新</td>
+<td style="text-align:left">Handler</td>
+<td style="text-align:left">-</td>
+<td style="text-align:left">MVVM自动刷新</td>
+</tr>
+<tr>
+<td style="text-align:center">打开页面</td>
+<td style="text-align:left">activity.startActivity()</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">navCtrl.push()</td>
+</tr>
+<tr>
+<td style="text-align:center">关闭页面</td>
+<td style="text-align:left">finish</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">navCtrl.pop()</td>
+</tr>
+<tr>
+<td style="text-align:center">页面传值</td>
+<td style="text-align:left">Intent</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">NavParams</td>
+</tr>
+<tr>
+<td style="text-align:center">页面生命周期</td>
+<td style="text-align:left">onCreate()<br>onStart()<br>onResume()<br>onPause()<br>onStop()<br>onDestroy()<br></td>
+<td style="text-align:left">initWithCoder<br>awakeFromNib<br>loadView<br> viewDidLoad<br>viewWillAppear<br>viewWillLayoutSubviews<br>viewDidLayoutSubviews<br>viewWillLayoutSubviews<br>viewDidLayoutSubviews<br>viewDidAppear<br>viewWillDisappear<br>viewDidDisappear<br>dealloc<br>didReceiveMemoryWarning</td>
+<td style="text-align:left">ionViewDidLoad<br>ionViewWillEnter<br>ionViewDidEnter<br>ionViewWillLeave<br>ionViewDidLeave<br>ionViewWillUnload<br>ionViewDidUnload<br>ionViewCanEnter<br>ionViewCanLeave</td>
+</tr>
+<tr>
+<td style="text-align:center">参数回传</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">网络请求</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">网络请求</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">设备调用</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">自动更新</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">页面布局</td>
+<td style="text-align:left">LinearLayout<br>TableLayout<br>FrameLayout<br> RelativeLayout<br>GridLayout<br>AbsoluteLayout</td>
+<td style="text-align:left">xib、UIView</td>
+<td style="text-align:left">css、html</td>
+</tr>
+<tr>
+<td style="text-align:center">多线程</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">图片选取</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">拍照</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">内存管理</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">数据赋值</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">兼容性</td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+        
+          <p class="article-more-link">
+            <a href="/hero.wanyan.site/2018/08/23/2018-8-23-多平台开发/#more">阅读全文</a>
+          </p>
+        
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-2018-8-17-node自动化的一些解释" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/hero.wanyan.site/2018/08/17/2018-8-17-node自动化的一些解释/">node自动化的一些解释</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/hero.wanyan.site/2018/08/17/2018-8-17-node自动化的一些解释/" class="article-date">
+  <time datetime="2018-08-16T16:00:00.000Z" itemprop="datePublished">2018-08-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/hero.wanyan.site/categories/自动化/">自动化</a>►<a class="article-category-link" href="/hero.wanyan.site/categories/自动化/nodejs/">nodejs</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/nodejs/">nodejs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/hero.wanyan.site/tags/原理理解/">原理理解</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="node自动化的一些解释"><a href="#node自动化的一些解释" class="headerlink" title="node自动化的一些解释"></a>node自动化的一些解释</h1><h3 id="1-版本号："><a href="#1-版本号：" class="headerlink" title="1. 版本号："></a>1. 版本号：</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">大版本.次要版本.小版本</span><br></pre></td></tr></table></figure></div>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>符号</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无符号</td>
+<td></td>
+<td>1.2.2</td>
+<td>只安装1.2.2版本</td>
+</tr>
+<tr>
+<td>波浪号</td>
+<td>~</td>
+<td>~1.2.2</td>
+<td>只安装1.2.x版本，并且不低于1.2.2</td>
+</tr>
+<tr>
+<td>插入号</td>
+<td>^</td>
+<td>^1.2.2</td>
+<td>只安装1.x.x版本，并且不低于1.2.2</td>
+</tr>
+<tr>
+<td>最新版本</td>
+<td></td>
+<td>latest</td>
+<td>安装最新版本</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- more --&gt;</span><br><span class="line">//安装为dependencies：运行时依赖模块</span><br><span class="line">npm install express --save</span><br><span class="line">//安装为devDependencies：开发时依赖模块</span><br><span class="line">npm install express --save</span><br></pre></td></tr></table></figure></div>
+<h3 id="2-npm-run执行的命令"><a href="#2-npm-run执行的命令" class="headerlink" title="2. npm run执行的命令"></a>2. <code>npm run</code>执行的命令</h3><p>例如在我们的项目目录的package.json文件中有：<br><code>project/package.json</code></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">...</span><br><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;clean&quot;: &quot;ionic-app-scripts clean&quot;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+<p>但是当我们直接执行  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; ionic-app-scritps clean</span><br></pre></td></tr></table></figure></div>
+<p>将会提示：<code>command not found: ionic-app-scritps</code>那<code>ionic-app-scripts</code>命令是哪里来的呢？看名称像是属于ionic的命令，并且结合我们平常使用时候的所有的命令的出处皆为<code>project/node_modules/@ionic/app-scripts</code>，因此打开此目录并查看其<code>package.json</code>文件，发现其中有如下配置：  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&quot;bin&quot;: &#123;</span><br><span class="line">  &quot;ionic-app-scripts&quot;: &quot;./bin/ionic-app-scripts.js&quot;</span><br><span class="line">&#125;,</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+<p>因此猜测与<code>package.json</code>的<code>bin</code>配置有关，百度发现<code>bin</code>配置意义为：</p>
+<blockquote>
+<p>命令名和本地文件名的映射。在安装时，如果是全局安装，npm将会使用符号链接把这些文件链接到<code>prefix/bin</code>，如果是本地安装，会链接到<code>./node_modules/.bin/</code>  </p>
+</blockquote>
+<p>因此我们执行的命令：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; ionic-app-scritps clean</span><br></pre></td></tr></table></figure></div>
+<p>会被node解析到<code>project/node_modules/@ionic/app-scripts/bin/ionic-app-scripts.js</code>文件实际执行的也是此文件。</p>
+<p>因此命令  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp; ionic-app-scritps clean</span><br></pre></td></tr></table></figure></div>
+<p>即</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./node_modules/@ionic/app-scripts/bin/ionic-app-scripts.js build</span><br></pre></td></tr></table></figure></div>
+<p>我们还可以验证下angular的<code>project/node_modules/@angular/cli/package.json</code>文件</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;bin&quot;: &#123;</span><br><span class="line">    &quot;ng&quot;: &quot;./bin/ng&quot;</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure></div>
+<p>我们将<code>ng</code>命令配置到项目点的sciprt里面：  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;ng&quot;:&quot;ng serve&quot;,</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+<p>然后在项目的根目录执行：<code>npm run ng</code>可以看到<code>npm run ng</code>命令果然生效了，但是在没有按照angular-cli的全局环境中直接执行 <code>ng serve</code>是无效的</p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/hero.wanyan.site/hero.wanyan.site/">&laquo; 上一页</a><a class="page-number" href="/hero.wanyan.site/hero.wanyan.site/">1</a><span class="page-number current">2</span><a class="page-number" href="/hero.wanyan.site/hero.wanyan.site/page/3/">3</a><a class="extend next" rel="next" href="/hero.wanyan.site/hero.wanyan.site/page/3/">下一页 &raquo;</a>
+  </nav>
+
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/hero.wanyan.site/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/hero.wanyan.site/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/express/">express</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/gcd/">gcd</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/ionic/">ionic</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/ios/">ios</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/javascript/">javascript</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/php/">php</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/shell/">shell</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/ssh/">ssh</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/vim/">vim</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/wechat/">wechat</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/其他/">其他</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/原理/">原理</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/技巧/">技巧</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/hero.wanyan.site/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/hero.wanyan.site/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/hero.wanyan.site/tags/express/" style="font-size: 10px;">express</a> <a href="/hero.wanyan.site/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/hero.wanyan.site/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/hero.wanyan.site/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/hero.wanyan.site/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/hero.wanyan.site/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/hero.wanyan.site/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/hero.wanyan.site/tags/php/" style="font-size: 10px;">php</a> <a href="/hero.wanyan.site/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/hero.wanyan.site/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/hero.wanyan.site/tags/vim/" style="font-size: 10px;">vim</a> <a href="/hero.wanyan.site/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/hero.wanyan.site/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/hero.wanyan.site/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/hero.wanyan.site/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/hero.wanyan.site/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/hero.wanyan.site/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/hero.wanyan.site/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/hero.wanyan.site/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/hero.wanyan.site/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/hero.wanyan.site/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/hero.wanyan.site/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/hero.wanyan.site/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/hero.wanyan.site/2019/04/16/2019-04-16-22-Ionic3开发测试配置方式/">Ionic3开发测试配置方式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/hero.wanyan.site/fancybox/jquery.fancybox.css">
+  <script src="/hero.wanyan.site/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/hero.wanyan.site/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/hero.wanyan.site/" class="mobile-nav-link">首页</a>
+  
+    <a href="/hero.wanyan.site/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/hero.wanyan.site/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/hero.wanyan.site/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>
