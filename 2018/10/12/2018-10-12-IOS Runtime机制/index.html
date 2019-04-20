@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>IOS Runtime机制 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="IOS Runtime机制 runtime机制最主要的是了解OC底层的原理、一些主要的数据结构。objective本质上是需要被编译为c/c++的，根据c/c++的一些结构体，指针，链表等方向会帮助我们更好的了解它的runtime机制 Runtime使用的三个不同的层次1. 源代码直接编写objective的代码也是在使用runtime，因为runtime系统自动在我们看不到的场景中运行着，Obj">
+<meta name="keywords" content="ios">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOS Runtime机制">
+<meta property="og:url" content="http://yoursite.com/2018/10/12/2018-10-12-IOS Runtime机制/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="IOS Runtime机制 runtime机制最主要的是了解OC底层的原理、一些主要的数据结构。objective本质上是需要被编译为c/c++的，根据c/c++的一些结构体，指针，链表等方向会帮助我们更好的了解它的runtime机制 Runtime使用的三个不同的层次1. 源代码直接编写objective的代码也是在使用runtime，因为runtime系统自动在我们看不到的场景中运行着，Obj">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/10/12/2018-10-12-IOS%20Runtime机制/IOS%20Runtime机制/QQ20181012-090914.png">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.896Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IOS Runtime机制">
+<meta name="twitter:description" content="IOS Runtime机制 runtime机制最主要的是了解OC底层的原理、一些主要的数据结构。objective本质上是需要被编译为c/c++的，根据c/c++的一些结构体，指针，链表等方向会帮助我们更好的了解它的runtime机制 Runtime使用的三个不同的层次1. 源代码直接编写objective的代码也是在使用runtime，因为runtime系统自动在我们看不到的场景中运行着，Obj">
+<meta name="twitter:image" content="http://yoursite.com/2018/10/12/2018-10-12-IOS%20Runtime机制/IOS%20Runtime机制/QQ20181012-090914.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-2018-10-12-IOS Runtime机制" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      IOS Runtime机制
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2018/10/12/2018-10-12-IOS Runtime机制/" class="article-date">
+  <time datetime="2018-10-11T16:00:00.000Z" itemprop="datePublished">2018-10-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/IOS/">IOS</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ios/">ios</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>IOS Runtime机制</p>
+<p>runtime机制最主要的是了解OC底层的原理、一些主要的数据结构。objective本质上是需要被编译为c/c++的，根据c/c++的一些结构体，指针，链表等方向会帮助我们更好的了解它的runtime机制</p>
+<h2 id="Runtime使用的三个不同的层次"><a href="#Runtime使用的三个不同的层次" class="headerlink" title="Runtime使用的三个不同的层次"></a>Runtime使用的三个不同的层次</h2><h3 id="1-源代码"><a href="#1-源代码" class="headerlink" title="1. 源代码"></a>1. 源代码</h3><p>直接编写objective的代码也是在使用runtime，因为runtime系统自动在我们看不到的场景中运行着，Objective-c已经封装好了上层api供我们调用，比如Class类就对应于一个c/c++的结构体。</p>
+<h3 id="2-NSObject类中定义的基础框架"><a href="#2-NSObject类中定义的基础框架" class="headerlink" title="2. NSObject类中定义的基础框架"></a>2. NSObject类中定义的基础框架</h3><p>NSObject里面的很多方法都是直接查询runtime系统中的信息，诸如<code>respondsToSelector:</code>、<code>methodForSelector:</code>，<code>isKindOfClass:</code>。</p>
+<h3 id="3-直接使用runtime的方法"><a href="#3-直接使用runtime的方法" class="headerlink" title="3. 直接使用runtime的方法"></a>3. 直接使用runtime的方法</h3><p>直接引入runtime头文件<code>#import &lt;objc/runtime.h&gt;</code>使用其中的runtme定义的方法</p>
+<p>我们重点需要理解的是第二类以及第三类</p>
+<h2 id="NSObject类中定义的基础框架"><a href="#NSObject类中定义的基础框架" class="headerlink" title="NSObject类中定义的基础框架"></a>NSObject类中定义的基础框架</h2><p>在理解NSObject中的runtime之前需要了解几个类型的定义：</p>
+<ol>
+<li><p><code>SEL</code>类型的定义<br> ios中指的是runtime环境中注册过的名称，可以使用<code>NSStringFromSelector</code>将其转换为<code>NSString</code>类型</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/// An opaque type that represents a method selector.</span><br><span class="line">typedef struct objc_selector *SEL;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><code>@selector()</code>操作符<br>objective-c的编译命令，能获取到一个方法的对应的在runtime环境中注册的名称，返回类型为<code>SEL</code></p>
+</li>
+</ol>
+<ul>
+<li><p>获取<code>SEL</code></p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SEL aSelector = @selector(methodName);</span><br><span class="line"></span><br><span class="line">//有时候类的方法并非在编译时就有了的，而是在runtime加上去的，就要用到下面的一种方法了</span><br><span class="line">//当然，此方法也能直接使用编译时就存在的方法名</span><br><span class="line">SEL aSelector = NSSelectorFromString(@&quot;methodName&quot;);</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>使用<code>SEL</code></p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SEL aSelector = @selector(run);</span><br><span class="line">[aDog performSelector:aSelector];</span><br><span class="line">[anAthlete performSelector:aSelector];</span><br><span class="line">[aComputerSimulation performSelector:aSelector];</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p>其他示例</p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">-(void)viewDidLoad&#123;</span><br><span class="line">	// 非常规方式可以在 target-&gt;combined&gt;Enable Strict Checking Of objc_msgsend Calls、改为false,来验证IMP方法</span><br><span class="line">	// SEL methodId=@selector(testSel:);</span><br><span class="line">	// IMP imp=[self methodForSelector:methodId];</span><br><span class="line">	// id resVal=imp(self,methodId,@&quot;我是传进来的参数&quot;);</span><br><span class="line">	// 但是正常情况也会报错闪退，而且无法获取到resVal的值</span><br><span class="line">	// 结果会输出：testSel打印的消息:我是传进来的消息</span><br><span class="line">	</span><br><span class="line">	    </span><br><span class="line">	SEL methodId=@selector(testSel);</span><br><span class="line">	IMP imp=[self methodForSelector:methodId];</span><br><span class="line">	//imp不带参数，返回值为空可以执行，不会报错</span><br><span class="line">	// 结果会输出：testSel打印的消息:没有参数</span><br><span class="line">	imp();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(void)testSel:(NSString *)name&#123;</span><br><span class="line">    NSLog(@&quot;testSel打印的消息:%@&quot;,name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(void)testSel&#123;</span><br><span class="line">    NSLog(@&quot;testSel打印的消息:%@&quot;,@&quot;没有参数&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ul>
+<h2 id="直接使用runtime的方法"><a href="#直接使用runtime的方法" class="headerlink" title="直接使用runtime的方法"></a>直接使用runtime的方法</h2><h3 id="元类"><a href="#元类" class="headerlink" title="元类"></a>元类</h3><p><code>objc/objc.h</code></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef struct objc_class *Class;</span><br></pre></td></tr></table></figure></div>
+<p><code>objc/runtime.h</code></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">struct objc_class &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line">#if !__OBJC2__</span><br><span class="line">	 //父类</span><br><span class="line">    Class _Nullable super_class ;</span><br><span class="line">    </span><br><span class="line">    //类名</span><br><span class="line">    const char * _Nonnull name ;    </span><br><span class="line">    </span><br><span class="line">    // 类的版本信息，默认为0</span><br><span class="line">    long version ;</span><br><span class="line">    </span><br><span class="line">    // 类信息，供运行期使用的一些位标识</span><br><span class="line">    long info ;</span><br><span class="line">    </span><br><span class="line">    // 该类的实例变量大小</span><br><span class="line">    long instance_size ;</span><br><span class="line">    </span><br><span class="line">    // 该类的成员变量链表</span><br><span class="line">    struct objc_ivar_list * _Nullable ivars ;</span><br><span class="line">    </span><br><span class="line">    // 方法定义的链表</span><br><span class="line">    struct objc_method_list * _Nullable * _Nullable methodLists ;</span><br><span class="line">    </span><br><span class="line">    // 方法缓存</span><br><span class="line">    struct objc_cache * _Nonnull cache ;</span><br><span class="line">    </span><br><span class="line">    // 协议链表</span><br><span class="line">    struct objc_protocol_list * _Nullable protocols ;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure></div>
+<p>首先得知道，OC中<strong>一切皆是对象，类也是对象</strong>（或者可以称之为类对象），由一个类实例化来的对象叫“实例对象”，也就是说实例对象所属的类叫“类”，元类就是类对象所属的类，因此，实例对象是类的实例，类作为对象又是元类的实例。</p>
+<p>那么既然一切皆是对象，那么元类也是对象，那元类对象的类又是什么呢？<br>元类对象的类叫根元类，也是NSObject的所属类（注意区分NSObject的实例对象的所属的类）而根元类的类即它本身<br><img src="./IOS Runtime机制/QQ20181012-090914.png" alt></p>
+<ul>
+<li><p>实例对象：当我们在代码中new一个实例对象时，拷贝了实例所属的类的成员变量，但不拷贝类定义的方法。调用实例方法时，根据实例的isa指针去寻找方法对应的函数指针。  </p>
+</li>
+<li><p>类对象：是一个功能完整的对象。特殊之处在于它们是由程序员定义而在运行时由编译器创建的，它没有自己的实例变量（这里区别于类的成员变量，他们是属于实例对象的，而不是属于类对象的，类方法是属于类对象自己的），但类对象中存着成员变量与实例方法列表。  </p>
+</li>
+<li><p>元类对象：OC 的类方法是使用元类的根本原因，因为其中存储着对应的类对象调用的方法即类方法。其他时候都倾向于隐藏元类，因此真实世界没有人发送消息给元类对象。元类的定义和创建看起来都是编译器自动完成的，无需人为干涉。</p>
+</li>
+</ul>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><ol>
+<li><p><code>id</code>类型的定义</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef struct objc_object *id;</span><br><span class="line"></span><br><span class="line">/// Represents an instance of a class.</span><br><span class="line">struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><code>objc_method</code>的定义</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct objc_method &#123;</span><br><span class="line">    SEL _Nonnull method_name;			//方法名称</span><br><span class="line">    char * _Nullable method_types;	//方法的类型</span><br><span class="line">    IMP _Nonnull method_imp;			//函数指针</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><code>SEL</code>类型的定义</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/// An opaque type that represents a method selector.</span><br><span class="line">typedef struct objc_selector *SEL;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><code>IMP</code>类型的定义</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/// A pointer to the function of a method implementation. </span><br><span class="line">#if !OBJC_OLD_DISPATCH_PROTOTYPES</span><br><span class="line">typedef void (*IMP)(void /* id, SEL, ... */ ); </span><br><span class="line">#else</span><br><span class="line">typedef id _Nullable (*IMP)(id _Nonnull, SEL _Nonnull, ...); </span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<h3 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//car.h </span><br><span class="line">@interface Car : NSObject</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//car.m</span><br><span class="line">#import &quot;Car.h&quot;</span><br><span class="line">@interface Car()&#123;</span><br><span class="line">@private</span><br><span class="line">    NSInteger version;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@property(nonatomic,copy) NSString * name;</span><br><span class="line">@property(nonatomic,copy) NSString * kind;</span><br><span class="line">@property(nonatomic,assign) NSInteger price;</span><br><span class="line">@property(nonatomic,copy,readonly) NSString* father;</span><br><span class="line"></span><br><span class="line">@end;</span><br><span class="line"></span><br><span class="line">@implementation Car</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">//viewController</span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    Car *car =[[Car alloc] init];</span><br><span class="line">    NSLog(@&quot;car:%@&quot;,[car description]);</span><br><span class="line">    Ivar ivar = class_getInstanceVariable(Car.class, &quot;_name&quot;);</span><br><span class="line">    NSLog(@&quot;object_setIvar之前的_name:%@&quot;,object_getIvar(car, ivar));</span><br><span class="line">    object_setIvar(car, ivar, @&quot;雷凌&quot;);</span><br><span class="line">    NSLog(@&quot;object_setIvar之后的_name:%@&quot;,object_getIvar(car, ivar));</span><br><span class="line">    NSLog(@&quot;上面的输出说明了object_setIvar能够改变私有属性的值&quot;);</span><br><span class="line">    </span><br><span class="line">    Ivar ivar_father=class_getInstanceVariable(Car.class, &quot;_father&quot;);</span><br><span class="line">    //car.father=@&quot;丰田&quot;;</span><br><span class="line">    NSLog(@&quot;object_setIvar之前的readonly属性_father:%@&quot;,object_getIvar(car, ivar_father));</span><br><span class="line">    object_setIvar(car, ivar_father, @&quot;丰田&quot;);</span><br><span class="line">    NSLog(@&quot;object_setIvar之后的readonly属性_father:%@&quot;,object_getIvar(car, ivar_father));</span><br><span class="line">    NSLog(@&quot;上面的输出说明了object_setIvar能够改变readonly属的值&quot;);</span><br><span class="line">    </span><br><span class="line">    Ivar ivar_version=class_getInstanceVariable(Car.class, &quot;version&quot;);</span><br><span class="line">    object_setIvar(car, ivar_version, @(199121212));</span><br><span class="line">    NSLog(@&quot;object_setIvar之后的成员变量version:%@&quot;,object_getIvar(car, ivar_version));</span><br><span class="line">    </span><br><span class="line">    Ivar ivar_mother=class_getInstanceVariable(Car.class, &quot;mother&quot;);</span><br><span class="line">    object_setIvar(car, ivar_mother, @(199121212));</span><br><span class="line">    NSLog(@&quot;car没有的成员变量mother:%@&quot;,object_getIvar(car, ivar_mother));</span><br><span class="line"></span><br><span class="line">	//运行结果：</span><br><span class="line">	//car:&lt;Car: 0x610000059bf0&gt;</span><br><span class="line">	//object_setIvar之前的_name:(null)</span><br><span class="line">	//object_setIvar之后的_name:雷凌</span><br><span class="line">	//上面的输出说明了object_setIvar能够改变私有属性的值</span><br><span class="line">	//object_setIvar之前的readonly属性_father:(null)</span><br><span class="line">	//object_setIvar之后的readonly属性_father:丰田</span><br><span class="line">	//上面的输出说明了object_setIvar能够改变readonly属的值</span><br><span class="line">	//object_setIvar之后的成员变量version:199121212</span><br><span class="line">	//car没有的成员变量mother:(null)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p><a href="https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc" target="_blank" rel="noopener">runtime 方法列表及文档地址</a></p>
+<p>附：  </p>
+<ol>
+<li><a href="https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc" target="_blank" rel="noopener">Objective-c Runtime文档</a>  </li>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocSelectors.html#//apple_ref/doc/uid/TP30001163-CH23-SW1" target="_blank" rel="noopener">Objective-c Selectors文档</a></li>
+</ol>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2018/10/15/2018-10-15-Chrome Javascritp调试技巧/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            Chrome Javascritp调试技巧
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">IOS版微信cordova插件——详细剖析</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Fri Oct 12 2018 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Fri Oct 12 2018 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

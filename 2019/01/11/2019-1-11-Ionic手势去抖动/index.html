@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Ionic手势去抖动 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="Ionic手势去抖动为什么需要去抖动某些浏览器，在执行touchmove、mousemove等手势类回调的时候可能一秒钟之内会被连续触发超过60次，甚至到到120次（实测Chrome不会超过60次、Safari能达到120次），我们知道60次已经完全满足了流畅度的要求，如果强制在1s的时间内执行120次页面重绘完全没有必要，反而容易导致卡顿，因此我们需要选择性的只执行其中的一部分回调，从而让页面重">
+<meta name="keywords" content="hybrid,ionic,原理理解,源码剖析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ionic手势去抖动">
+<meta property="og:url" content="http://yoursite.com/2019/01/11/2019-1-11-Ionic手势去抖动/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="Ionic手势去抖动为什么需要去抖动某些浏览器，在执行touchmove、mousemove等手势类回调的时候可能一秒钟之内会被连续触发超过60次，甚至到到120次（实测Chrome不会超过60次、Safari能达到120次），我们知道60次已经完全满足了流畅度的要求，如果强制在1s的时间内执行120次页面重绘完全没有必要，反而容易导致卡顿，因此我们需要选择性的只执行其中的一部分回调，从而让页面重">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/01/11/2019-1-11-Ionic手势去抖动/debounce原理.png">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.904Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ionic手势去抖动">
+<meta name="twitter:description" content="Ionic手势去抖动为什么需要去抖动某些浏览器，在执行touchmove、mousemove等手势类回调的时候可能一秒钟之内会被连续触发超过60次，甚至到到120次（实测Chrome不会超过60次、Safari能达到120次），我们知道60次已经完全满足了流畅度的要求，如果强制在1s的时间内执行120次页面重绘完全没有必要，反而容易导致卡顿，因此我们需要选择性的只执行其中的一部分回调，从而让页面重">
+<meta name="twitter:image" content="http://yoursite.com/2019/01/11/2019-1-11-Ionic手势去抖动/debounce原理.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-2019-1-11-Ionic手势去抖动" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Ionic手势去抖动
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/01/11/2019-1-11-Ionic手势去抖动/" class="article-date">
+  <time datetime="2019-01-10T16:00:00.000Z" itemprop="datePublished">2019-01-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/原理理解/">原理理解</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="Ionic手势去抖动"><a href="#Ionic手势去抖动" class="headerlink" title="Ionic手势去抖动"></a>Ionic手势去抖动</h1><h2 id="为什么需要去抖动"><a href="#为什么需要去抖动" class="headerlink" title="为什么需要去抖动"></a>为什么需要去抖动</h2><p>某些浏览器，在执行<code>touchmove</code>、<code>mousemove</code>等手势类回调的时候可能一秒钟之内会被连续触发超过60次，甚至到到120次（实测Chrome不会超过60次、Safari能达到120次），我们知道60次已经完全满足了流畅度的要求，如果强制在1s的时间内执行120次页面重绘完全没有必要，反而容易导致卡顿，因此我们需要选择性的只执行其中的一部分回调，从而让页面重绘在1s中之内最多只执行60次。</p>
+<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>js的<code>requestAnimationFrame</code>会在1s中之内固定执行大概60次、我们可以利用它来筛选<code>touchmove</code>、<code>mousemove</code>等回调<br>当触发一次<code>touchmove</code>、<code>mousemove</code>的时候，调用一次<code>requestAnimationFrame</code>,并锁定，此时再调用<code>requestAnimationFrame</code>是无效的，当<code>requestAnimationFrame</code>的回调被执行的时候，再给解锁、此时能继续调用<code>requestAnimationFrame</code>，因此在锁定期间视图调用<code>requestAnimationFrame</code>的方法都被舍弃了，不会被执行，因此达到了过滤掉多余的<code>touchmove</code>、<code>mousemove</code>等回调的目的，而且在1s中的时间内回调的次数不会超过<code>requestAnimationFrame</code>回调的次数</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">let locked=false;</span><br><span class="line">function debounce(fn)&#123;</span><br><span class="line">	if(!locked)&#123;</span><br><span class="line">		locked = true;					//调用requestAnimationFrame时将其锁定</span><br><span class="line">										//锁定期间无法再次调用</span><br><span class="line">		requestAnimationFrame(()=&gt;&#123;</span><br><span class="line">			locked = false;				//requestAnimationFrame回调的时候解锁</span><br><span class="line">			fn &amp;&amp; fn();</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">let outCallBackNum = 0;</span><br><span class="line">let inCallBackNum=0;</span><br><span class="line">let times=120;							//1s执行次数</span><br><span class="line">for(let i=0;i&lt;times;i++)&#123;</span><br><span class="line">	setTimeout(()=&gt;&#123;</span><br><span class="line">		outCallBackNum ++ ;</span><br><span class="line">		console.log(&quot;out&quot;+outCallBackNum);</span><br><span class="line">		debounce(()=&gt;&#123;</span><br><span class="line">			inCallBackNum ++;</span><br><span class="line">			console.log(&quot;in&quot;+inCallBackNum);</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;,1000/times*i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//=&gt;out1</span><br><span class="line">//=&gt;in1</span><br><span class="line">//=&gt;out2</span><br><span class="line">//=&gt;in2</span><br><span class="line">//=&gt;out3</span><br><span class="line">//=&gt;out4</span><br><span class="line">//=&gt;in3</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">//=&gt;out118</span><br><span class="line">//=&gt;in60</span><br><span class="line">//=&gt;out119</span><br><span class="line">//=&gt;out120</span><br><span class="line">//=&gt;in61</span><br></pre></td></tr></table></figure></div>
+<p>由上方的测试代码可以看到，在debounce包装内的回调被执行了61次、包装外部却被执行了120次，也可以将times的大小  </p>
+<ul>
+<li>若time超过60次依旧可以看到in依旧在60次左右</li>
+<li>若time不超过60次时、in与out的执行次数基本相同</li>
+</ul>
+<h2 id="Ionic实现方式"><a href="#Ionic实现方式" class="headerlink" title="Ionic实现方式"></a>Ionic实现方式</h2><p>ionic中去抖动是在<code>src/platform/dom-controller.ts</code>文件中实现，其中包含两个类</p>
+<ul>
+<li><code>DomDebouncer</code><br>  充当锁的作用，每个<code>DomDebouncer</code>就是一把锁，当其锁定时，该<code>DomDebouncer</code>无法再继续往<code>DomController</code>中对应的方法，也因此不会被执行，从而舍弃</li>
+<li><code>DomController</code><br>  统一调度<code>requestAnimationFrame</code>，在每次的<code>requestAnimationFrame</code>的回调被执行时、调用其队列中维护着的方法列表，并依次执行    </li>
+</ul>
+<p>使用方式：  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">this.debouncer = opts.domController.debouncer();</span><br><span class="line">this.debouncer.write(() =&gt; &#123;</span><br><span class="line">	//do something here in debouncer zone</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></div>
+<p>其具体的执行过程可以参考下图</p>
+<p><img src="./debounce原理.png" alt></p>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>去抖动不仅仅可以运用在手势事件上，也不仅仅是运用<code>requestAnimationFram</code>实现，还可以利用<code>setTimeout()</code> 、<code>setInterval</code>等方法来实现，运用在用户点击某个按钮，或者用户输入文字等等更多的情况下，</p>
+<p>例如：禁止在300ms内重复点击按钮    </p>
+<p>例如：直接根据用户正在输入的文字调用接口回太快，导致性能受到影响，需要在禁止用户在200ms内重复调用接口  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;button id=&quot;btn&quot; style=&quot;width:100px;height:100px;&quot; onclick=&quot;clickMe()&quot;&gt;点我&lt;/button&gt;</span><br><span class="line">    &lt;input id=&quot;ipt&quot; style=&apos;width:100%&apos; name=&apos;myname&apos; onchange=&quot;changed()&quot; oninput=&quot;changing()&quot;&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        class Debounce &#123;</span><br><span class="line"></span><br><span class="line">            constructor() &#123;</span><br><span class="line">                this.locked = false;</span><br><span class="line">            &#125;</span><br><span class="line">            debounce(action, time) &#123;</span><br><span class="line">                if (!this.locked) &#123;</span><br><span class="line">                    this.locked = true;</span><br><span class="line">                    // action &amp;&amp; action();</span><br><span class="line">                    setTimeout(() =&gt; &#123;</span><br><span class="line">                        this.locked = false;</span><br><span class="line">                        action &amp;&amp; action();</span><br><span class="line">                    &#125;, time || 200)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        let debounce = new Debounce();</span><br><span class="line">        function clickMe() &#123;</span><br><span class="line">            console.log(&apos;clicked!&apos;);</span><br><span class="line">            debounce.debounce(() =&gt; &#123;</span><br><span class="line">                console.log(&apos;do something...&apos;);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function actionReqeust() &#123;</span><br><span class="line">            console.log(&apos;fire request...&apos;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function changed() &#123;</span><br><span class="line">            actionReqeust();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        function changing() &#123;</span><br><span class="line">            console.log(&apos;changing!&apos;);</span><br><span class="line">            debounce.debounce(() =&gt; &#123;</span><br><span class="line">                actionReqeust();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></div>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2019/01/15/2019-1-15-express源码解读/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            express源码剖析
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2019/01/04/Ionic深入详解/2019-1-4-Ionic 手势事件/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Ionic 手势事件</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Fri Jan 11 2019 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Fri Jan 11 2019 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

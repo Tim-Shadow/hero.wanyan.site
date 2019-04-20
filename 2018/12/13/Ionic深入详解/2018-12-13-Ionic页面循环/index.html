@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Ionic页面循环 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="Ionic页面操作（push、pop、insert、remove、set）  _queueTrns() 将某个改变添加到页面执行队列  _nextTrns()执行队列中的下一个变换  _viewInit()若需要，则初始化即将加入到页面中视图——enteringView  _viewTest()确保页面生命周期中的canLeave()/canEnter()返回true，反回true操作才能继续">
+<meta name="keywords" content="hybrid,ionic,源码剖析,原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ionic页面循环">
+<meta property="og:url" content="http://yoursite.com/2018/12/13/Ionic深入详解/2018-12-13-Ionic页面循环/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="Ionic页面操作（push、pop、insert、remove、set）  _queueTrns() 将某个改变添加到页面执行队列  _nextTrns()执行队列中的下一个变换  _viewInit()若需要，则初始化即将加入到页面中视图——enteringView  _viewTest()确保页面生命周期中的canLeave()/canEnter()返回true，反回true操作才能继续">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.910Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ionic页面循环">
+<meta name="twitter:description" content="Ionic页面操作（push、pop、insert、remove、set）  _queueTrns() 将某个改变添加到页面执行队列  _nextTrns()执行队列中的下一个变换  _viewInit()若需要，则初始化即将加入到页面中视图——enteringView  _viewTest()确保页面生命周期中的canLeave()/canEnter()返回true，反回true操作才能继续">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-Ionic深入详解/2018-12-13-Ionic页面循环" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Ionic页面循环
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2018/12/13/Ionic深入详解/2018-12-13-Ionic页面循环/" class="article-date">
+  <time datetime="2018-12-12T16:00:00.000Z" itemprop="datePublished">2018-12-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <ol>
+<li><p>Ionic页面操作（push、pop、insert、remove、set）</p>
+</li>
+<li><p><code>_queueTrns()</code><br> 将某个改变添加到页面执行队列</p>
+<ol>
+<li><p><code>_nextTrns()</code><br>执行队列中的下一个变换</p>
+</li>
+<li><p><code>_viewInit()</code><br>若需要，则初始化即将加入到页面中视图——enteringView</p>
+</li>
+<li><p><code>_viewTest()</code><br>确保页面生命周期中的<code>canLeave()</code>/<code>canEnter()</code>返回<code>true</code>，反回<code>true</code>操作才能继续  </p>
+</li>
+<li><p><code>_postViewInit()</code><br>在导航堆栈中添加或删除对应的页面视图  </p>
+</li>
+<li><p><code>_transitionInit()</code><br>初始化可视化的页面转换效果，若需要则执行它  </p>
+</li>
+<li><p><code>_viewAttachToDOM()</code><br>将新增的视图添加到dom树中  </p>
+</li>
+<li><p><code>_transitionStart()</code><br>页面转换正式开始时调用，在这里会初始化下层的动画  </p>
+</li>
+<li><p><code>_transitionFinish()</code><br>页面转换结束时调用</p>
+</li>
+<li><p><code>_cleanup()</code><br>同步堆栈与dom的内部状态，例如会在这里移除、隐藏或显示堆栈中的页面视图</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>以上所有的操作均围绕<code>TransitionInstruction</code>的转换指令进行</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">export interface TransitionInstruction&#123;</span><br><span class="line">  opts: NavOptions;</span><br><span class="line">  insertStart?: number;					//页面插入的起始位置</span><br><span class="line">  insertViews?: any[];					//将要插入的页面视图</span><br><span class="line">  removeView?: ViewController;			//将要移除掉的页面的标志的控制器，removeStart会以其为基点重新计算</span><br><span class="line">  removeStart?: number;					//页面移除的起始位置</span><br><span class="line">  removeCount?: number;					//页面移除的数量</span><br><span class="line">  resolve?: (hasCompleted: boolean) =&gt; void;	//页面转换执行成功的回调  </span><br><span class="line">  reject?: (rejectReason: string) =&gt; void;		//页面转换执行失败的回调</span><br><span class="line">  done?: TransitionDoneFn;				//页面转换整体执行完毕的回调</span><br><span class="line">  leavingRequiresTransition?: boolean;	//页面离开是否需要转换动画</span><br><span class="line">  enteringRequiresTransition?: boolean;	//页面进入是否需要转换动画</span><br><span class="line">  requiresTransition?: boolean;			//页面切换是否需要执行转换动画</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h2 id="insertPage"><a href="#insertPage" class="headerlink" title="insertPage()"></a>insertPage()</h2><h3 id="1-queueTrns"><a href="#1-queueTrns" class="headerlink" title="1. _queueTrns"></a>1. <code>_queueTrns</code></h3><p>将此<code>TransitionInstruction</code>放置到队列的末尾  </p>
+<h3 id="2-nextTrns"><a href="#2-nextTrns" class="headerlink" title="2. _nextTrns"></a>2. <code>_nextTrns</code></h3><p>在进入循环时，取队里的第一个 <code>TransitionInstruction</code>  </p>
+<h3 id="3-startTI"><a href="#3-startTI" class="headerlink" title="3.  _startTI"></a>3.  <code>_startTI</code></h3><p>之后重新整理计算<code>TransitionInstruction</code>中的项目中需要移除的、添加的页面视图的参数（<code>removeStart</code>、<code>removeCount</code>等）然后再根据这些字段判断其是否需要执行页面离开或进入的转换动画  </p>
+<h3 id="4-setTransitioning"><a href="#4-setTransitioning" class="headerlink" title="4. setTransitioning"></a>4. <code>setTransitioning</code></h3><p>将动画开始的标志设置为true（并未真正开始执行动画）  </p>
+<h3 id="5-loadLazyLoading"><a href="#5-loadLazyLoading" class="headerlink" title="5.  _loadLazyLoading"></a>5.  <code>_loadLazyLoading</code></h3><p>将<code>TransitionInstruction</code>中需要插入的视图全部转换为对应的<code>ViewController</code>，这里又分为多种情况：  </p>
+<ol>
+<li>传的是页面对应的<code>ViewController</code>(<code>ViewController</code>)<br> 直接使用</li>
+<li>传的是页面对应的构造方法（<code>function</code>）<br> 直接使用构造方法构造出<code>ViewController</code></li>
+<li><p>传的是页面的名称字符串（<code>string</code>）  </p>
+<pre><code>通过`DeepLink`与`ModuleLoader`自动创建，在`ModuleLoader` 中有使用`LAZY_LOADED_TOKEN`获取的其实是Component的对应的构造方法  
+</code></pre><p> 这步骤之后已经将insertViews中各种类型（<code>function</code>、<code>ViewController</code>、<code>string</code>的页面全部转换成为了<code>ViewController类型</code>）</p>
+</li>
+</ol>
+<h3 id="6"><a href="#6" class="headerlink" title="6."></a>6.</h3><p>从要删除的、添加的、已经存在的页面视图中找到之后需要真正执行页面转换动画的视图：<code>leavingView</code>、<code>enteringView</code></p>
+<h3 id="7-viewInit"><a href="#7-viewInit" class="headerlink" title="7. _viewInit"></a>7. <code>_viewInit</code></h3><p>因为<code>enteringView</code>可能是未曾初始化的页面，因此还需要通过组件工厂对其初始化（一个<code>ViewController</code>并非一个组件的实例，此处才真正通过<code>ViewController</code>对组件的实例进行了初始化），此时的<code>ViewController</code>的初始化工作已全部完成：<code>ViewController</code>初始化、组件实例初始化、开始执行Ionic的对应的生命周期<br><strong><font style="color:red">此处执行Ionic生命周期：<code>ionViewPreLoad</code></font></strong>   </p>
+<h3 id="8-viewTest"><a href="#8-viewTest" class="headerlink" title="8. _viewTest"></a>8. <code>_viewTest</code></h3><p>测试<code>enteringView</code>、<code>leavingView</code>是否能进入或离开（<code>ionViewCanEnter</code>、<code>ionViewCanLeave</code>）</p>
+<h3 id="9-postViewInit"><a href="#9-postViewInit" class="headerlink" title="9.  _postViewInit"></a>9.  <code>_postViewInit</code></h3><p>将要隐式添加的（藏在<code>enteringView</code>、<code>leavingView</code>之后的看不见的）、删除的页面视图都由dom中添加(<code>_insertViewAt</code>)或删除(<code>_destroyView</code>)。<br>若此视图已经在当前页面视图在栈中存在，则只将其换个位置，避免额外开销</p>
+<font style="color:blue">注意：<code>_insertViewAt</code>并未修改dom结构，因此并未将页面视图放置到dom树中，<code>_destroyView</code>会修改dom结构，并调用Angular的<code>ComponentRef</code>的<code>destory</code>方法来销毁此组件</font>      
+
+<font style="color:blue">注意：此时<code>enteringView</code>、<code>leavingView</code>并未被添加或删除，只添加或删除了其他的页面视图</font>      
+
+<p><strong><font style="color:red">此处执行Ionic生命周期：<code>ionViewWillLeave</code>、<code>ionViewDidLeave</code>、<code>ionViewWillUnload</code>(不确定)</font></strong><br>只能在其子视图中使用的某些注入就是在此处注入的  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const componentProviders = ReflectiveInjector.resolve([</span><br><span class="line">  &#123; provide: NavController, useValue: this &#125;,</span><br><span class="line">  &#123; provide: ViewController, useValue: enteringView &#125;,</span><br><span class="line">  &#123; provide: NavParams, useValue: enteringView.getNavParams() &#125;</span><br><span class="line">]);</span><br></pre></td></tr></table></figure></div>
+<h3 id="10-transition"><a href="#10-transition" class="headerlink" title="10. _transition"></a>10. <code>_transition</code></h3><p>对<code>enteringView</code>、<code>leavingView</code>准备开始执行动画</p>
+<h3 id="11-viewAttachToDOM"><a href="#11-viewAttachToDOM" class="headerlink" title="11. _viewAttachToDOM"></a>11. <code>_viewAttachToDOM</code></h3><p>在执行动画之前，若视图未添加到dom还得将页面视图加入到dom中<br><strong><font style="color:red">此处执行Ionic生命周期：<code>ionViewWillLoad</code>、<code>ionViewDidLoad</code></font></strong></p>
+<h3 id="12-transitionStart"><a href="#12-transitionStart" class="headerlink" title="12. _transitionStart"></a>12. <code>_transitionStart</code></h3><p>正式执行动画<br><strong><font style="color:red">此处执行Ionic生命周期：<code>ionViewWillEnter</code>、<code>ionViewWillLeave</code>,<code>ionViewWillUnload</code></font></strong></p>
+<h3 id="13-transitionFinish"><a href="#13-transitionFinish" class="headerlink" title="13. _transitionFinish"></a>13. <code>_transitionFinish</code></h3><p>通过<code>DeepLink</code>的<code>navChange(direction: string)</code>方法更新浏览器的对应url，并且关掉打开着的键盘</p>
+<h3 id="14-success"><a href="#14-success" class="headerlink" title="14. _success"></a>14. <code>_success</code></h3><p>再次检查_queue中是否还有新的<code>TransitionInstruction</code>，并对其执行下一次，同时对当前的<code>TransitionInstruction</code>执行其<code>resove</code>回调方法，</p>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2018/12/14/Ionic深入详解/2018-12-14-Ionic DeepLink/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            Ionic DeepLink
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2018/11/26/2018-11-26-IONIC/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">IONIC</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Thu Dec 13 2018 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Thu Dec 13 2018 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

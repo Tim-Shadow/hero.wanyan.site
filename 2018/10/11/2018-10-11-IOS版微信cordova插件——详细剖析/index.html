@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>IOS版微信cordova插件——详细剖析 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="步骤二 微信步骤：    [2] 将SDK文件中包含的 libWeChatSDK.a，WXApi.h，WXApiObject.h 三个文件添加到你所建的工程中（如下图所示，建立了一个名为Test 的工程，并把以上三个文件添加到Test文件夹下）。(注：请使用xCode4.5及以上版本)     对应wechat-plugin配置：line:67 to 70   1234&amp;lt;!-- Wechat">
+<meta name="keywords" content="hybrid,wechat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOS版微信cordova插件——详细剖析">
+<meta property="og:url" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="步骤二 微信步骤：    [2] 将SDK文件中包含的 libWeChatSDK.a，WXApi.h，WXApiObject.h 三个文件添加到你所建的工程中（如下图所示，建立了一个名为Test 的工程，并把以上三个文件添加到Test文件夹下）。(注：请使用xCode4.5及以上版本)     对应wechat-plugin配置：line:67 to 70   1234&amp;lt;!-- Wechat">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/wyD7ylTtc-I1U4SKWJkQqc6kJUlz_sEtEDqlnJbj1M-12H2_NFqPzphSDfoGKbTZ.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/qXIS1XaeAWkQxAJeyFfJPNQUfzVWbPnyqeYUTl3Q3rW1j29j5eQn4xaUNYXErjql.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/0.jpeg">
+<meta property="og:image" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/D0cASngXe-iPCis46Ym5kecHKbihU5JneVf5_EFsx6GzR9yrnunCc8I8z5hbqGIv.png">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.893Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IOS版微信cordova插件——详细剖析">
+<meta name="twitter:description" content="步骤二 微信步骤：    [2] 将SDK文件中包含的 libWeChatSDK.a，WXApi.h，WXApiObject.h 三个文件添加到你所建的工程中（如下图所示，建立了一个名为Test 的工程，并把以上三个文件添加到Test文件夹下）。(注：请使用xCode4.5及以上版本)     对应wechat-plugin配置：line:67 to 70   1234&amp;lt;!-- Wechat">
+<meta name="twitter:image" content="http://yoursite.com/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/wyD7ylTtc-I1U4SKWJkQqc6kJUlz_sEtEDqlnJbj1M-12H2_NFqPzphSDfoGKbTZ.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-2018-10-11-IOS版微信cordova插件——详细剖析" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      IOS版微信cordova插件——详细剖析
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2018/10/11/2018-10-11-IOS版微信cordova插件——详细剖析/" class="article-date">
+  <time datetime="2018-10-10T16:00:00.000Z" itemprop="datePublished">2018-10-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/">Hybrid</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wechat/">wechat</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h3 id="步骤二"><a href="#步骤二" class="headerlink" title="步骤二"></a>步骤二</h3><ul>
+<li><p>微信步骤：  </p>
+<blockquote>
+<p>[2] 将SDK文件中包含的 libWeChatSDK.a，WXApi.h，WXApiObject.h 三个文件添加到你所建的工程中（如下图所示，建立了一个名为Test 的工程，并把以上三个文件添加到Test文件夹下）。<br>(注：请使用xCode4.5及以上版本)<br><img src="./wyD7ylTtc-I1U4SKWJkQqc6kJUlz_sEtEDqlnJbj1M-12H2_NFqPzphSDfoGKbTZ.png" alt="图片">  </p>
+</blockquote>
+</li>
+<li><p>对应wechat-plugin配置：<br>line:67 to 70</p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Wechat Official --&gt;</span><br><span class="line">&lt;header-file src=&quot;src/ios/libs/OpenSDK1.8.0/WXApi.h&quot; /&gt;</span><br><span class="line">&lt;header-file src=&quot;src/ios/libs/OpenSDK1.8.0/WXApiObject.h&quot; /&gt;</span><br><span class="line">&lt;source-file src=&quot;src/ios/libs/OpenSDK1.8.0/libWeChatSDK.a&quot; framework=&quot;true&quot; /&gt;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ul>
+<h3 id="步骤三"><a href="#步骤三" class="headerlink" title="步骤三"></a>步骤三</h3><ul>
+<li><p>微信步骤：  </p>
+<blockquote>
+<p>[3]微信开放平台新增了微信模块用户统计功能，便于开发者统计微信功能模块的用户使用和活跃情况。开发者需要在工程中链接上:SystemConfiguration.framework, libz.dylib, libsqlite3.0.dylib, libc++.dylib, Security.framework, CoreTelephony.framework, CFNetwork.framework。  </p>
+</blockquote>
+</li>
+<li><p>对应wechat-plugin配置：<br>line:72 to 79  </p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- Other required frameworks --&gt;</span><br><span class="line">&lt;framework src=&quot;libz.tbd&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;libsqlite3.0.tbd&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;CoreTelephony.framework&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;SystemConfiguration.framework&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;Security.framework&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;CFNetwork.framework&quot; /&gt;</span><br><span class="line">&lt;framework src=&quot;libstdc++.6.tbd&quot; /&gt;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ul>
+<h3 id="步骤四"><a href="#步骤四" class="headerlink" title="步骤四"></a>步骤四</h3><ul>
+<li><p>微信步骤：   </p>
+<blockquote>
+<p>[4]在你的工程文件中选择Build Setting，在”Other Linker Flags”中加入”-Objc -all_load”，在Search Paths中添加 libWeChatSDK.a ，WXApi.h，WXApiObject.h，文件所在位置（如下图所示）。</p>
+</blockquote>
+</li>
+<li><p>对应wechat-plugin配置：<br>这一步在cordova将文件添加到ios工程中的时候回自动处理，因此无需额外配置</p>
+</li>
+</ul>
+<h3 id="步骤五"><a href="#步骤五" class="headerlink" title="步骤五"></a>步骤五</h3><ul>
+<li><p>微信步骤：  </p>
+<blockquote>
+<p>[5] 在Xcode中，选择你的工程设置项，选中“TARGETS”一栏，在“info”标签栏的“URL type“添加“URL scheme”为你所注册的应用程序id（如下图所示）<br><img src="./qXIS1XaeAWkQxAJeyFfJPNQUfzVWbPnyqeYUTl3Q3rW1j29j5eQn4xaUNYXErjql.png" alt><br>Xcode设置URL scheme</p>
+</blockquote>
+</li>
+<li><p>对应的wechat-plugin配置：<br>line: 50 to 61   </p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;config-file target=&quot;*-Info.plist&quot; parent=&quot;CFBundleURLTypes&quot;&gt;</span><br><span class="line">       &lt;array&gt;</span><br><span class="line">           &lt;dict&gt;</span><br><span class="line">               &lt;key&gt;CFBundleURLName&lt;/key&gt;</span><br><span class="line">               &lt;string&gt;weixin&lt;/string&gt;</span><br><span class="line">               &lt;key&gt;CFBundleURLSchemes&lt;/key&gt;</span><br><span class="line">               &lt;array&gt;</span><br><span class="line">                   &lt;string&gt;$WECHATAPPID&lt;/string&gt;</span><br><span class="line">               &lt;/array&gt;</span><br><span class="line">           &lt;/dict&gt;</span><br><span class="line">       &lt;/array&gt;</span><br><span class="line">   &lt;/config-file&gt;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ul>
+<h3 id="步骤六"><a href="#步骤六" class="headerlink" title="步骤六"></a>步骤六</h3><ul>
+<li><p>微信步骤：   </p>
+<blockquote>
+<p>[6] 在Xcode中，选择你的工程设置项，选中“TARGETS”一栏，在“info”标签栏的“LSApplicationQueriesSchemes“添加weixin（如下图所示）。<br><img src="./0.jpeg" alt></p>
+</blockquote>
+</li>
+<li><p>对应的wechat-plugin配置：<br>line:35 to 40</p>
+  <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;config-file target=&quot;*-Info.plist&quot; parent=&quot;LSApplicationQueriesSchemes&quot;&gt;</span><br><span class="line">    &lt;array&gt;</span><br><span class="line">        &lt;string&gt;weixin&lt;/string&gt;</span><br><span class="line">        &lt;string&gt;wechat&lt;/string&gt;</span><br><span class="line">    &lt;/array&gt;</span><br><span class="line">&lt;/config-file&gt;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ul>
+<h3 id="步骤七"><a href="#步骤七" class="headerlink" title="步骤七"></a>步骤七</h3><ul>
+<li><p>微信步骤：  </p>
+<blockquote>
+<p>[7] 在你需要使 用微信终端API的文件中import WXApi.h 头文件，并增加 WXApiDelegate 协议。</p>
+</blockquote>
+</li>
+<li><p>对应的wechat-plugin配置：<br>这里的实现对应的是 <code>src/ios/CDVWechat.h</code>、<code>src/ios/CDVWechat.m</code>两个文件，也即是实现cordova-plugin的协议的两个文件了</p>
+</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ul>
+<li><p>微信步骤：<br>微信中需要注册<code>WECHATAPPID</code><br><img src="./D0cASngXe-iPCis46Ym5kecHKbihU5JneVf5_EFsx6GzR9yrnunCc8I8z5hbqGIv.png" alt></p>
+</li>
+<li><p>对应的wechat-plugin配置：<br>在插件中是这样处理的：</p>
+<ol>
+<li><p>定义一个对应变量：<br> line: 18  </p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">	&lt;preference name=&quot;WECHATAPPID&quot; /&gt;</span><br><span class="line">	```  </span><br><span class="line">	此变量也即是在安装插件时需要带入的参数了  </span><br><span class="line"></span><br><span class="line">2. 在插件初始化时：</span><br></pre></td></tr></table></figure></div>
+<p> #pragma mark “API”</p>
+<ul>
+<li><p>(void)pluginInitialize {<br>   NSString* appId = [[self.commandDelegate settings] objectForKey:@”wechatappid”];<br>   if (appId){</p>
+<pre><code>self.wechatAppId = appId;
+[WXApi registerApp: appId];
+</code></pre><p>   }</p>
+<p>   NSLog(@”cordova-plugin-wechat has been initialized. Wechat SDK Version: %@. APP_ID: %@.”, [WXApi getApiVersion], appId);<br>}<br><code>`</code><br><strong>注：<code>[self.commandDelegate settings]</code>的值为<code>platforms/ios/企业服务云/config.xml</code>中的<code>preference</code>设置的对应的键值，这个文件也是真正的对于对应平台使用到的值</strong></p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p><em>附:<br><a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=1417694084&amp;token=&amp;lang=zh_CN" target="_blank" rel="noopener">微信IOS接入文档</a></em></p>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2018/10/12/2018-10-12-IOS Runtime机制/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            IOS Runtime机制
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2018/08/23/2018-8-23-多平台开发/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">多平台开发</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Thu Oct 11 2018 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Thu Oct 11 2018 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

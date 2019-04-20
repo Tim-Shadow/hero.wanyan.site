@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Ionic 手势事件 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="Ionic 手势事件Ionic 中有三类手势    Gesture   Swipe    PanGesture    GestureIonic中Gesture引入了Gesture但无其对应的实现Gesture底层使用的HammerJs Gesture此类需要稍微解释下，因为第三方 Ionic组件ionic-img-viewerImage viewer for Ionic 2+中使用到了它，但是由于">
+<meta name="keywords" content="hybrid,ionic,源码剖析,原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ionic 手势事件">
+<meta property="og:url" content="http://yoursite.com/2019/01/04/Ionic深入详解/2019-1-4-Ionic 手势事件/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="Ionic 手势事件Ionic 中有三类手势    Gesture   Swipe    PanGesture    GestureIonic中Gesture引入了Gesture但无其对应的实现Gesture底层使用的HammerJs Gesture此类需要稍微解释下，因为第三方 Ionic组件ionic-img-viewerImage viewer for Ionic 2+中使用到了它，但是由于">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.911Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ionic 手势事件">
+<meta name="twitter:description" content="Ionic 手势事件Ionic 中有三类手势    Gesture   Swipe    PanGesture    GestureIonic中Gesture引入了Gesture但无其对应的实现Gesture底层使用的HammerJs Gesture此类需要稍微解释下，因为第三方 Ionic组件ionic-img-viewerImage viewer for Ionic 2+中使用到了它，但是由于">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-Ionic深入详解/2019-1-4-Ionic 手势事件" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Ionic 手势事件
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/01/04/Ionic深入详解/2019-1-4-Ionic 手势事件/" class="article-date">
+  <time datetime="2019-01-03T16:00:00.000Z" itemprop="datePublished">2019-01-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="Ionic-手势事件"><a href="#Ionic-手势事件" class="headerlink" title="Ionic 手势事件"></a>Ionic 手势事件</h1><p>Ionic 中有三类手势  </p>
+<ol>
+<li>Gesture  </li>
+<li>Swipe   </li>
+<li>PanGesture  </li>
+</ol>
+<h2 id="Gesture"><a href="#Gesture" class="headerlink" title="Gesture"></a>Gesture</h2><p>Ionic中Gesture引入了Gesture但无其对应的实现<br>Gesture底层使用的<a href="http://hammerjs.github.io/" target="_blank" rel="noopener">HammerJs</a></p>
+<p><code>Gesture</code>此类需要稍微解释下，因为第三方 Ionic组件<code>ionic-img-viewer</code><a href="https://github.com/Riron/ionic-img-viewer" target="_blank" rel="noopener">Image viewer for Ionic 2+</a>中使用到了它，但是由于<code>Gesture</code>中的一个bug会导致其在放大时上下滑动的操作并不流畅，其中有调用：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this.options(&#123; direction: DIRECTION_HORIZONTAL | DIRECTION_VERTICAL &#125;);</span><br></pre></td></tr></table></figure></div>
+<p>但是此方法并不能将手势事件设置为同时支持横向和竖向。<br>需要覆盖其<code>on</code>方法并重写才能真正达到同时支持正向和横向：</p>
+<p>ionic中原on方法：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">on(type: string, cb: Function) &#123;</span><br><span class="line">	if (type === &apos;pinch&apos; || type === &apos;rotate&apos;) &#123;</span><br><span class="line">	  this._hammer.get(type).set(&#123;enable: true&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	this._hammer.on(type, cb);</span><br><span class="line">	(this._callbacks[type] || (this._callbacks[type] = [])).push(cb);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>在其子类中覆盖掉此方法：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">on(type, cb: Function) &#123;</span><br><span class="line">    let __this: any = this;</span><br><span class="line">    __this._hammer.get(type) &amp;&amp; __this._hammer.get(type).set(__this._options);</span><br><span class="line">    super.on(type, cb);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h2 id="Swiper"><a href="#Swiper" class="headerlink" title="Swiper"></a>Swiper</h2><p>Ionic中的<code>Slides</code>控件使用的是Swipe的手势<br>Swipe底层使用的是<a href="http://idangero.us/swiper/" target="_blank" rel="noopener">Swiper</a></p>
+<h2 id="PanGesture"><a href="#PanGesture" class="headerlink" title="PanGesture"></a>PanGesture</h2><p>Ionic中诸如：</p>
+<ol>
+<li>滑动返回上一页</li>
+<li><code>ion-menu</code>的打开关闭</li>
+<li><code>ion-item</code>的左右滑动事件</li>
+<li>下拉刷新、上拉加载更多</li>
+<li><code>ion-toggle</code>控件</li>
+</ol>
+<p>都是使用的js原始的手势事件的封装，这篇文章分析的也是<code>PanGesture</code></p>
+<h3 id="PanGesture解析"><a href="#PanGesture解析" class="headerlink" title="PanGesture解析"></a>PanGesture解析</h3><ol>
+<li><p><code>PanGestureConfig</code>  </p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">export interface PanGestureConfig &#123;</span><br><span class="line">  threshold?: number;				//阈值</span><br><span class="line">  maxAngle?: number;				//最大角度</span><br><span class="line">  direction?: &apos;x&apos; | &apos;y&apos;;			//方向</span><br><span class="line">  gesture?: GestureDelegate;		//事件代理</span><br><span class="line">  domController?: DomController;	//用来去抖动</span><br><span class="line">  zone?: boolean;					//是否允许于Angular ngZone</span><br><span class="line">  capture?: boolean;				//是否在js事件捕获阶段</span><br><span class="line">  passive?: boolean;				//</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<pre><code>* `threshold`：在某个方向上的移动距离达到或超过此值才能触发手势开始事件  
+* `maxAngle`：若在某个方向上的夹角超过了这个大小，那么就不会触发这个方向的手势事件      
+* `direction`：在x（横向）或者y（纵向）方向方向触发手势事件  
+* `gesture`：事件代理，每个`PanGesture`都需要维护一个事件代理，其能够决定此手势是否能正确运行，并且在同时同方向存在多个手势事件时能够根据优先级以及一些其他的设置来决定手势是否触发  
+* `domController`：是通过取其中`debouncer():DomDebouncer{}`来去抖动，使手指在屏幕上滑动的时间经过平滑后再回调到`onDrag`的事件中  
+* `capture`：js事件捕获可以在两个阶段进行拦截，若capture为ture则在捕获阶段拦截，否则在冒泡阶段拦截   
+
+    1. 事件由根节点传递到子节点的过程中（捕获）
+    2. 事件在传递到最上层的子节点，然后返回根节点的过程（冒泡） 
+
+* `passive`：
+</code></pre><ol>
+<li><p><code>GestureDelegate</code></p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">constructor(</span><br><span class="line">    private name: string,				//事件名称</span><br><span class="line">    private id: number,					//事件的id</span><br><span class="line">    private controller: GestureController,  //全局单例的手势管理器	</span><br><span class="line">    private priority: number,			//优先级</span><br><span class="line">    private disableScroll: boolean		//是否需要禁止滚动</span><br><span class="line">  ) &#123; &#125;</span><br></pre></td></tr></table></figure></div>
+<p> 其中<code>disableScroll</code> 是通过在<code>ion-app</code>中添加<code>.disable-scroll</code>的方式实现</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.disable-scroll .ion-page &#123;</span><br><span class="line">	pointer-events: none;</span><br><span class="line">	touch-action: none;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2019/01/11/2019-1-11-Ionic手势去抖动/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            Ionic手势去抖动
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2018/12/21/Ionic深入详解/2018-12-21-Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Fri Jan 04 2019 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Fri Jan 04 2019 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

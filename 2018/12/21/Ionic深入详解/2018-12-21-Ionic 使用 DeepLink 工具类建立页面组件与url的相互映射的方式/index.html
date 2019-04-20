@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式 | Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式@IonicPage()装饰器ionic编译命令会将@IonicPage()编译为DeepLinkMetaData的列表类型 1234567891011@IonicPage(&amp;#123;    name: &amp;apos;APage&amp;apos;,    segment: &amp;quot;a/:a-params&amp;quot;,">
+<meta name="keywords" content="hybrid,ionic,源码剖析,原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式">
+<meta property="og:url" content="http://yoursite.com/2018/12/21/Ionic深入详解/2018-12-21-Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:description" content="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式@IonicPage()装饰器ionic编译命令会将@IonicPage()编译为DeepLinkMetaData的列表类型 1234567891011@IonicPage(&amp;#123;    name: &amp;apos;APage&amp;apos;,    segment: &amp;quot;a/:a-params&amp;quot;,">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-19T13:49:52.911Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式">
+<meta name="twitter:description" content="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式@IonicPage()装饰器ionic编译命令会将@IonicPage()编译为DeepLinkMetaData的列表类型 1234567891011@IonicPage(&amp;#123;    name: &amp;apos;APage&amp;apos;,    segment: &amp;quot;a/:a-params&amp;quot;,">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-Ionic深入详解/2018-12-21-Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2018/12/21/Ionic深入详解/2018-12-21-Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式/" class="article-date">
+  <time datetime="2018-12-20T16:00:00.000Z" itemprop="datePublished">2018-12-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/移动前端/">移动前端</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/">Hybrid</a>►<a class="article-category-link" href="/categories/移动前端/Hybrid/Ionic/">Ionic</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hybrid/">hybrid</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ionic/">ionic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/原理/">原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码剖析/">源码剖析</a></li></ul>
+
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="Ionic-使用-DeepLink-工具类建立页面组件与url的相互映射的方式"><a href="#Ionic-使用-DeepLink-工具类建立页面组件与url的相互映射的方式" class="headerlink" title="Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式"></a>Ionic 使用 DeepLink 工具类建立页面组件与url的相互映射的方式</h1><h2 id="IonicPage-装饰器"><a href="#IonicPage-装饰器" class="headerlink" title="@IonicPage()装饰器"></a><code>@IonicPage()</code>装饰器</h2><p>ionic编译命令会将<code>@IonicPage()</code>编译为<code>DeepLinkMetaData</code>的列表类型</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@IonicPage(&#123;</span><br><span class="line">    name: &apos;APage&apos;,</span><br><span class="line">    segment: &quot;a/:a-params&quot;,</span><br><span class="line">    defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">&#125;)</span><br><span class="line">@Component(&#123;</span><br><span class="line">    selector: &apos;page-a&apos;,</span><br><span class="line">    templateUrl: &apos;a.html&apos;,</span><br><span class="line">&#125;)</span><br><span class="line">export class APage &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">links:[</span><br><span class="line">  &#123;</span><br><span class="line">    loadChildren: &apos;../pages/a/a.module#APageModule&apos;,</span><br><span class="line">    name: &apos;APage&apos;,</span><br><span class="line">    segment: &apos;a/:a-params&apos;,</span><br><span class="line">    priority: &apos;low&apos;,</span><br><span class="line">    defaultHistory: [</span><br><span class="line">      &apos;BPage&apos;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure></div>
+<p>然后将<code>links</code>作为<code>IonicModule.forRoot()</code>的第三个参数传入，通过Angular的机制将其绑定到<code>DeepLinkConfigToken</code>的<code>InjectionToken</code>中然后作为<code>UrlSerializer</code>的工厂方法的参数用来构建一个<code>UrlSerializer</code></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&#123; provide: DeepLinkConfigToken, useValue: deepLinkConfig &#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">&#123; provide: UrlSerializer, useFactory: setupUrlSerializer, deps: [ App, DeepLinkConfigToken ] &#125;,</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">export function setupUrlSerializer(app: App, userDeepLinkConfig: any): UrlSerializer &#123;</span><br><span class="line">  return new UrlSerializer(app, userDeepLinkConfig);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+<p>因此在项目中可以通过<code>UrlSerializer</code>的依赖注入拿到<code>@IonicPage()</code>中设置的内容。  </p>
+<p>总结：<br><code>@IonicPage</code>：Ionic编译时期的一个<strong>标志</strong>，其在运行时无任何作用<br><code>UrlSerializer</code>：保存了有所有页面缩影信息(即<code>NavLink</code>)的列表的全局变量  </p>
+<h2 id="由当前页面信息拼接出url"><a href="#由当前页面信息拼接出url" class="headerlink" title="由当前页面信息拼接出url"></a>由当前页面信息拼接出url</h2><p><em>断点入口文件：<code>node_modules/ionic-angular/navigation/deep-linker.js</code><br>断点入口方法：<code>DeepLinker.prototype.navChange</code></em></p>
+<p><strong>示例：</strong><br>将<code>APage</code>设置为<code>Nav</code>的<code>root</code>  </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;ion-nav [root]=&quot;&apos;APage&apos;&quot; [rootParams]=&quot;&#123;&apos;a-params&apos;:&apos;paramsForA&apos;&#125;&quot;&gt;&lt;/ion-nav&gt;</span><br></pre></td></tr></table></figure></div>
+<p>在组件初始化完毕之后会： </p>
+<ol>
+<li><p><strong>拿到当前App的所有的root导航容器（调用过<code>app.registerRootNav()</code>）方法</strong>  </p>
+<p> 当前示例中只存在一个<code>id: &quot;n4&quot;</code>的<code>Nav</code>的root导航容器  </p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	id:&quot;n4&quot;,</span><br><span class="line">	type:&quot;nav&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<ol start="2">
+<li><p><strong>由导航的根节点往子节点依次遍历，拿到导航容器(<code>Nav</code>、<code>Tab</code>)中的当前激活的<code>ViewController</code>，并将其与对应的导航容器、页面数据组合起来</strong>  </p>
+<p> 当前示例中<code>Nav</code>激活的页面<code>ViewController</code>为</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component:ƒ APage(navCtrl, navParams),</span><br><span class="line">	name: &quot;APage&quot;,</span><br><span class="line">	data: &#123;a-params: &quot;paramsForA&quot;&#125;,</span><br><span class="line">	id: &quot;a/paramsForA&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<ol start="3">
+<li><p><strong>将组合起来的数据结合所有页面的缩影（即<code>NavLink</code>数组）找到对应的具体的某个页面的缩影（<code>NavLink</code>），并将其对应数据完善（结合了各方面数据的<code>NavLink</code>）</strong>   </p>
+<p> 当前示例对应的NavLink:</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: ƒ APage(navCtrl, navParams)</span><br><span class="line">	dataKeys: &#123;a-params: true&#125;</span><br><span class="line">	dataLen: 1</span><br><span class="line">	defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">	loadChildren: &quot;../pages/a/a.module#APageModule&quot;</span><br><span class="line">	name: &quot;APage&quot;</span><br><span class="line">	priority: &quot;low&quot;</span><br><span class="line">	segment: &quot;a/:a-params&quot;</span><br><span class="line">	segmentParts: (2) [&quot;a&quot;, &quot;:a-params&quot;]</span><br><span class="line">	segmentPartsLen: 2</span><br><span class="line">	staticLen: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><strong>将导航容器、页面数据以及找到的完善信息的<code>NavLink</code>得到一个<code>NavSegment</code>的对象的列表（若存在<code>Nav</code>、<code>Tabs</code>、<code>Tab</code>的相互嵌套则可能存在多个<code>NavSegment</code>）</strong>   </p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">export interface NavSegment extends DehydratedSegment &#123;</span><br><span class="line">  type: string;								//对应的导航容器类型</span><br><span class="line">  navId: string;							//对应导航容器的navId</span><br><span class="line">  secondaryId: string;						//tabs的secondaryId</span><br><span class="line">  requiresExplicitNavPrefix?: boolean;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export interface DehydratedSegment &#123;</span><br><span class="line">  id: string;							//导航容器的id</span><br><span class="line">  name: string;							//页面的名称</span><br><span class="line">  component?: any;						//页面的组件</span><br><span class="line">  loadChildren?: string;				//页面组件加载的url</span><br><span class="line">  data: any;							//页面数据</span><br><span class="line">  defaultHistory?: NavSegment[];		//默认的历史页面</span><br><span class="line">  secondaryId?: string;					//tabs的secondaryId</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<pre><code>当前示例对应的`NavSegment`对象  
+
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	component: ƒ APage(navCtrl, navParams)</span><br><span class="line">	data: &#123;a-params: &quot;paramsForA&quot;&#125;</span><br><span class="line">	defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">	id: &quot;a/paramsForA&quot;</span><br><span class="line">	loadChildren: &quot;../pages/a/a.module#APageModule&quot;</span><br><span class="line">	name: &quot;APage&quot;</span><br><span class="line">	navId: &quot;n4&quot;</span><br><span class="line">	requiresExplicitNavPrefix: false</span><br><span class="line">	secondaryId: null</span><br><span class="line">	type: &quot;nav&quot;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure></div>
+</code></pre><ol start="5">
+<li><p><strong>将<code>NavSegment</code>列表的信息组合拼接成对应的<code>url</code></strong>  </p>
+<p> 当前的示例变化后的url为：<code>http://localhost:8100/#/a/paramsForA</code></p>
+</li>
+<li><strong>将url写入到历史栈中并利用Angular的<code>Location</code>更新url</strong></li>
+</ol>
+<h2 id="由url解析出来对应的页面组件"><a href="#由url解析出来对应的页面组件" class="headerlink" title="由url解析出来对应的页面组件"></a>由url解析出来对应的页面组件</h2><p><em>断点入口文件：<code>node_modules/ionic-angular/navigation/deep-linker.js</code><br>断点入口方法：<code>DeepLinker.prototype._urlChange</code></em></p>
+<p>示例url：<code>http://localhost:8100/#/a/paramsForA/#/b?a=name</code></p>
+<ol>
+<li><p><strong>将url规整化（确保以“/”开头并且结尾处无“/”，并去掉多余的“#”、“?”的数据）</strong>  </p>
+<p> 当前示例对应规整化的url：<code>/a/paramsForA</code></p>
+</li>
+<li><p><strong>若url中存在“nav”、“tabs”的片段，则可能具有嵌套的导航容器，需要将其分组处理</strong>  </p>
+<p> 当前示例无导航容器嵌套，因此只有一组url分组</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&quot;a/paramsForA&quot;]</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<ol start="3">
+<li><p><strong>将前面分组之后的数据进行处理，若是“nav”、“tabs”则这部分可能带有导航容器，暂且将其的类型设置为<code>nav</code>或<code>tabs</code>，讲分组内的其他片段转换到<code>segmentPieces</code>上</strong></p>
+<p> 当前示例对应的<code>NavGroups</code></p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	navId: null</span><br><span class="line">	niceId: null</span><br><span class="line">	secondaryId: null</span><br><span class="line">	segmentPieces: (2) [&quot;a&quot;, &quot;paramsForA&quot;]</span><br><span class="line">	type: null</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure></div>
+<p> 若url为<code>http://localhost:8100/#/tabs/a/b/nav/c/d</code><br> 则<code>NavGroups</code>为</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	navId: &quot;a&quot;</span><br><span class="line">	niceId: &quot;a&quot;</span><br><span class="line">	secondaryId: &quot;b&quot;</span><br><span class="line">	segmentPieces: []</span><br><span class="line">	type: &quot;tabs&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">	navId: &quot;c&quot;</span><br><span class="line">	niceId: &quot;c&quot;</span><br><span class="line">	secondaryId: null</span><br><span class="line">	segmentPieces: [&quot;d&quot;]</span><br><span class="line">	type: &quot;nav&quot;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><strong><code>urlSection</code>由后往前，一个、两个、多个的反向与 在<code>links</code>中匹配查找<code>name</code>与<code>segmentParts</code>的各段参数都能匹配上的，（url中可能带有参数的部分：<code>segmentParts</code>，例如例子的<code>paramsForA</code>,并不仅仅只是名称）</strong>  </p>
+<p> 当前示例中<code>segmentPieces</code>能与下面的<code>NavLink</code>完全匹配</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: ƒ APage(navCtrl, navParams)</span><br><span class="line">	dataKeys: &#123;a-params: true&#125;</span><br><span class="line">	dataLen: 1</span><br><span class="line">	defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">	loadChildren: &quot;../pages/a/a.module#APageModule&quot;</span><br><span class="line">	name: &quot;APage&quot;</span><br><span class="line">	priority: &quot;low&quot;</span><br><span class="line">	segment: &quot;a/:a-params&quot;</span><br><span class="line">	segmentParts: (2) [&quot;a&quot;, &quot;:a-params&quot;]</span><br><span class="line">	segmentPartsLen: 2</span><br><span class="line">	staticLen: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<pre><code>到到一个初步的`NavSegment`  
+
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: ƒ APage(navCtrl, navParams)</span><br><span class="line">	data: &#123;a-params: &quot;paramsForA&quot;&#125;</span><br><span class="line">	defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">	id: &quot;a/paramsForA&quot;</span><br><span class="line">	loadChildren: &quot;../pages/a/a.module#APageModule&quot;</span><br><span class="line">	name: &quot;APage&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</code></pre><ol start="5">
+<li><p><strong>如果在这段中完全没有被匹配到的<code>NavLink</code>，那么这个没被匹配到的<code>segment</code>暂时将这些<code>segment</code>的最后一个设置为某个tabs的<code>secondaryId</code></strong><br> 当前示例，无多余的<code>segment</code><br> 我们可以将url改为<code>http://localhost:8100/#/ZZZ</code><br> 将会得到如下<code>NavSegment</code></p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: null</span><br><span class="line">	data: null</span><br><span class="line">	defaultHistory: null</span><br><span class="line">	id: null</span><br><span class="line">	loadChildren: null</span><br><span class="line">	name: null</span><br><span class="line">	secondaryId: &quot;ZZZ&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+<li><p><strong>通过<code>这个NavSegment</code>信息，以及当前app已被初始化的信息，能够得到一个信息更完善的<code>NavSegment</code></strong><br> 当前示例对应的<code>NavSegment</code>:</p>
+ <div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: ƒ APage(navCtrl, navParams)</span><br><span class="line">	data: &#123;a-params: &quot;paramsForA&quot;&#125;</span><br><span class="line">	defaultHistory: [&quot;BPage&quot;]</span><br><span class="line">	id: &quot;a/paramsForA&quot;</span><br><span class="line">	loadChildren: &quot;../pages/a/a.module#APageModule&quot;</span><br><span class="line">	name: &quot;APage&quot;</span><br><span class="line">	navId: &quot;n4&quot;</span><br><span class="line">	secondaryId: undefined</span><br><span class="line">	type: &quot;nav&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</li>
+</ol>
+<pre><code>我们可以将url改为`http://localhost:8100/#/ZZZ`  
+
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	component: null</span><br><span class="line">	data: null</span><br><span class="line">	defaultHistory: null</span><br><span class="line">	id: null</span><br><span class="line">	loadChildren: null</span><br><span class="line">	name: null</span><br><span class="line">	navId: &quot;n4&quot;</span><br><span class="line">	secondaryId: &quot;ZZZ&quot;</span><br><span class="line">	type: &quot;nav&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+</code></pre><ol start="7">
+<li><p><strong>根据<code>NavSegment</code>的信息，找到对应的导航的容器，并将对应的页面置为对应<code>componet</code></strong>  </p>
+<p> 当前示例会正确呈现出<code>APage</code><br> 若将url改为<code>http://localhost:8100/#/ZZZ</code><br> 则因为无法找到对应的<code>component</code>，因此无法完成跳转  </p>
+</li>
+</ol>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2019/01/04/Ionic深入详解/2019-1-4-Ionic 手势事件/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            Ionic 手势事件
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2018/12/20/Ionic深入详解/2018-12-20-Ionic框架结构/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Ionic框架结构</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: 'Fri Dec 21 2018 00:00:00 GMT+0800',
+  owner: 'Tim-Shadow',
+  repo: 'hero.wanyan.site',
+  value: 'Fri Dec 21 2018 00:00:00 GMT+0800',
+  oauth: {
+    client_id: '46ba7fc30923a2823db1',
+    client_secret: '85f0d6bf4f24d13a76afd1de0100b85654526f85',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

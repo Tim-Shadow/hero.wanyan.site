@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Shadow如寒灬的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Shadow如寒灬的个人博客">
+<meta property="og:url" content="http://yoursite.com/page/3/index.html">
+<meta property="og:site_name" content="Shadow如寒灬的个人博客">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shadow如寒灬的个人博客">
+  
+    <link rel="alternate" href="/atom.xml" title="Shadow如寒灬的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-left">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-left">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+        <a class="nav-item" href="/nodejs/wechat/ranking-list" title>游戏高分榜</a>
+      
+        <a class="nav-item" href="/phpmyadmin" title>数据库</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main">
+  
+    <article id="post-2018-7-24-Mac安装并设置Php开发环境" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/24/2018-7-24-Mac安装并设置Php开发环境/">Mac安装并设置Php开发环境</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2018/07/24/2018-7-24-Mac安装并设置Php开发环境/" class="article-date">
+  <time datetime="2018-07-23T16:00:00.000Z" itemprop="datePublished">2018-07-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Web后端/">Web后端</a>►<a class="article-category-link" href="/categories/Web后端/php/">php</a>
+  </div>
+
+    
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/环境搭建/">环境搭建</a></li></ul>
+
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+        <div></div>
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <h1 id="Mac安装并设置Php开发环境"><a href="#Mac安装并设置Php开发环境" class="headerlink" title="Mac安装并设置Php开发环境"></a>Mac安装并设置Php开发环境</h1><h2 id="查看本机默认php以及Apache版本"><a href="#查看本机默认php以及Apache版本" class="headerlink" title="查看本机默认php以及Apache版本"></a>查看本机默认php以及Apache版本</h2><p>mac下自带有php以及Apache，可以通过以下命令查看是否安装以及对应版本<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ php --version</span><br><span class="line"></span><br><span class="line">PHP 7.1.14 (cli) (built: Feb  7 2018 18:33:30) ( NTS )</span><br><span class="line">Copyright (c) 1997-2018 The PHP Group</span><br><span class="line">Zend Engine v3.1.0, Copyright (c) 1998-2018 Zend Technologies</span><br></pre></td></tr></table></figure></div></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ httpd -v  </span><br><span class="line">//也可以使用 apachectl -v</span><br><span class="line"></span><br><span class="line">Server version: Apache/2.4.29 (Unix)</span><br><span class="line">Server built:   Jan 17 2018 18:20:31</span><br></pre></td></tr></table></figure></div>
+<h2 id="安装Mysql"><a href="#安装Mysql" class="headerlink" title="安装Mysql"></a>安装Mysql</h2><p>为了方便对安装的包进行管理（重装、卸载、升级等）建议使用Homebrew进行安装首先安装Homebrew</p>
+<h3 id="Homebrew安装以及简单介绍"><a href="#Homebrew安装以及简单介绍" class="headerlink" title="Homebrew安装以及简单介绍"></a>Homebrew安装以及简单介绍</h3><p><a href="https://brew.sh/" target="_blank" rel="noopener">Homebrew官网</a>  </p>
+<h4 id="Homebrew安装"><a href="#Homebrew安装" class="headerlink" title="Homebrew安装"></a>Homebrew安装</h4><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span><br></pre></td></tr></table></figure></div>
+<h4 id="Homebrew简单介绍"><a href="#Homebrew简单介绍" class="headerlink" title="Homebrew简单介绍"></a>Homebrew简单介绍</h4><p>Homebrew会在固定的目录（Cellar）中下载需要安装的程序，并将其链接（symlinks）到对应位置以供使用   </p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l bin</span><br><span class="line">bin/wget -&gt; ../Cellar/wget/1.16.1/bin/wget</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">*tips: Homebrew 还能通过`brew cask install firefox`来安装带有图像界面的app*  </span><br><span class="line"></span><br><span class="line">### 用Homebrew查找并安装mysql</span><br></pre></td></tr></table></figure></div>
+<p>$ brew search mysql</p>
+<p>==&gt; Formulae<br>automysqlbackup            mysql-connector-c          <a href="mailto:mysql@5.5" target="_blank" rel="noopener">mysql@5.5</a><br>mysql ✔                    mysql-connector-c++        <a href="mailto:mysql@5.6" target="_blank" rel="noopener">mysql@5.6</a><br>mysql++                    mysql-sandbox              <a href="mailto:mysql@5.7" target="_blank" rel="noopener">mysql@5.7</a><br>mysql-client               mysql-search-replace       mysqltuner<br>mysql-cluster              mysql-utilities</p>
+<p>==&gt; Casks<br>mysql-connector-python     mysql-utilities            navicat-for-mysql<br>mysql-shell                mysqlworkbench             sqlpro-for-mysql<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">找到你想要安装的mysql的对应版本的名称然后执行：</span><br></pre></td></tr></table></figure></div></p>
+<p>$ brew install mysql<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">安装之后重新启动命令行工具并执行：</span><br></pre></td></tr></table></figure></div></p>
+<p>$ mysql –version</p>
+<p>mysql  Ver 8.0.11 for osx10.13 on x86_64 (Homebrew)<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql启动有两种方式：</span><br></pre></td></tr></table></figure></div></p>
+<p>brew services start mysql<br>mysql.server start<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">这两种方式启动（管理）冲突，也就是说如果使用了`brew services start mysql`的方式启动了mysql则无法使用`mysql.server start` 的方式启动或者关闭mysql的服务，反之亦然。并且这两种方式对应的读取对应的配置文件也不一致：  </span><br><span class="line"></span><br><span class="line">* `brew services start mysql`  </span><br><span class="line">	配置文件位置：`/usr/local/Cellar/mysql/8.0.11/.bottle/etc/my.cnf`</span><br><span class="line">* `mysql.server start`  </span><br><span class="line">	配置文件位置：`/usr/local/etc/my.cnf`  </span><br><span class="line">	</span><br><span class="line">*配置文件刚安装时默认不存在、需要使用对应命令启动mysql服务才会自动创建*</span><br><span class="line"></span><br><span class="line">### 为Mysql创建初始密码</span><br></pre></td></tr></table></figure></div></p>
+<p>$ mysql_secure_installation<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">按照提示输入对应的信息创建初始密码，不同于5.x版本的Mysql，8.0版本的Mysql最低密码安全限度为最少8位字符</span><br><span class="line"></span><br><span class="line">### 为Mysql安装MysqlWorkbench</span><br><span class="line">在之前```$ brew search mysql```时cask栏目中存在```mysqlworkbench ```项，因此可以使用如下命令安装MysqlWorkbench：</span><br></pre></td></tr></table></figure></div></p>
+<p>$ brew cask install mysqlworkbench<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">安装成功之后便能在启动台找到MysqlWorkbench的身影了</span><br><span class="line"></span><br><span class="line">到此为止，php依赖的所有环境都已安装完毕</span><br><span class="line"></span><br><span class="line">## 完善Apache配置并启用php支持</span><br><span class="line">apache配置文件目录：</span><br></pre></td></tr></table></figure></div></p>
+<p>/etc/apache2/httpd.conf<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 启动apache</span><br></pre></td></tr></table></figure></div></p>
+<p>httpd -k start</p>
+<p>AH00558: httpd: Could not reliably determine the server’s fully qualified domain name, using tim-mac.local. Set the ‘ServerName’ directive globally to suppress this message<br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">正常情况下应该是无任何输出的，若遇到有上述提示信息则可以编辑/etc/apache2/httpd.conf文件查找并去掉`#ServerName www.example.com:80`之前的`#`号，之后执行`sudo httpd -k restart`命令，之后在浏览其中直接访问 [http://localhost/](http://localhost/)显示`It works!`则表明apache启动成功  </span><br><span class="line"></span><br><span class="line">### 完善Apache对php支持的配置</span><br><span class="line">* 打开php7模块支持</span><br><span class="line">编辑`/etc/apache2/httpd.conf`找到`# LoadModule php7_module libexec/apache2/libphp7.so`并去掉最前方的`#`</span><br><span class="line">* 配置php其他路径访问支持</span><br><span class="line">编辑`/etc/apache2/httpd.conf`并在其最末尾添加如下代码：</span><br></pre></td></tr></table></figure></div></p>
+<p><ifmodule alias_module><br>    Include /private/etc/apache2/alias/*.conf<br></ifmodule><br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">其意义为若打开了别名模块支持，则将`/private/etc/apache2/alias/`目录下对应的所有`.conf`结尾的文件导入到当前配置文件中来，因此我们还需要在`/private/etc/apache2/`中新建一个目录`alias`并在其中创建一个对应别名的`.conf`文件如：`study.conf`打开`study.conf`文件并添加入校代码：</span><br></pre></td></tr></table></figure></div></p>
+<p>Define STUDY_PATH /Users/path/to/study<br>Alias /study ${STUDY_PATH}</p>
+<p><directory ${study_path}><br>    Options Indexes FollowSymLinks #Indexes：目录下无可支持文件时显示目录结构，FollowSymLinks表示允许在此目录使用符号连接<br>    AllowOverride All #允许所有的url根据规则重写<br>    Require all granted #允许所有<br></directory><br><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">其意义为：定义一个名为`STUDY_PATH`的变量，其对应值为`/Users/path/to/study`，别名/study 指向`STUDY_PATH`对应的目录，并且指明 `STUDY_PATH`对应的权限配置  </span><br><span class="line">Options中的两个配置需要稍微解释下：  </span><br><span class="line"></span><br><span class="line">* Indexes </span><br><span class="line">	* 设置了`Indexes`时访问别名对应路径是对应的展示为：  </span><br><span class="line">	![](./Mac安装并设置Php开发环境/Index.png)  </span><br><span class="line">	* 未设置`Indexes`或者设置为 `-Indexesx`时对应展示为：  </span><br><span class="line">	![](./Mac安装并设置Php开发环境/-Index.png)  </span><br><span class="line">	此时只有对应目录下存在如`index.html`、`index.php`等类似文件才能正常访问（此目录下存在index.html内容为&quot;Hello world~&quot;）：</span><br><span class="line">	![](./Mac安装并设置Php开发环境/index-html.png)  	</span><br><span class="line"></span><br><span class="line">* FollowSymLinks  </span><br><span class="line">举例来说，如果你把首页目录设置为/var/www/html，那么你的网页程序最多只能访问到/var/www/html目录，上层目录是不可见的。如果FollowSymLinks被设置，则你可以通过链接把文件链接到/var/www/html目录以外的文件以访问该文件。</span><br><span class="line"></span><br><span class="line">* Require all granted  </span><br><span class="line">此配置项为apache2.4中配置允许所有host访问的设置</span><br><span class="line"></span><br><span class="line">* AllowOverride All</span><br><span class="line">允许`.htaccess`文件配置的规则来重写url</span><br><span class="line"></span><br><span class="line">配置完成之后可以在`STUDY_PATH`对应的目录下新建`index.php`</span><br></pre></td></tr></table></figure></div></p>
+<p>&lt;?php<br>echo “Hello world from index.php”;<br>?&gt;<br><code>`</code><br>然后刷新对应地址页面显示 <code>Hello world from index.php</code>则表示php的运行环境已经配置成功了！<br><img src="./Mac安装并设置Php开发环境/result.png" alt></p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
+
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/avatar1.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        如歌如羽
+      
+    </h3>
+    <p class="avatar-slogan">
+      移动前端开发工程师、Android开发工程师、IOS开发工程师、全栈开发工程师
+    </p>
+  </div>
+</div>
+
+
+  
+    
+<div class="widget-box">
+  <h3 class="widget-title">分类</h3>
+  <div class="widget">
+    <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/">Web后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/Nodejs/">Nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Web后端/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/">移动前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/Hybrid/">Hybrid</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/IOS/">IOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/bug记录/">bug记录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/其他/">其他</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/移动前端/技巧/">技巧</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/">自动化</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/自动化/shell/">shell</a></li></ul></li></ul>
+  </div>
+</div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <a class="tag-link" href="/tags/bug记录/">bug记录</a>，  <a class="tag-link" href="/tags/express/">express</a>，  <a class="tag-link" href="/tags/gcd/">gcd</a>，  <a class="tag-link" href="/tags/hybrid/">hybrid</a>，  <a class="tag-link" href="/tags/ionic/">ionic</a>，  <a class="tag-link" href="/tags/ios/">ios</a>，  <a class="tag-link" href="/tags/javascript/">javascript</a>，  <a class="tag-link" href="/tags/nodejs/">nodejs</a>，  <a class="tag-link" href="/tags/php/">php</a>，  <a class="tag-link" href="/tags/shell/">shell</a>，  <a class="tag-link" href="/tags/ssh/">ssh</a>，  <a class="tag-link" href="/tags/vim/">vim</a>，  <a class="tag-link" href="/tags/wechat/">wechat</a>，  <a class="tag-link" href="/tags/其他/">其他</a>，  <a class="tag-link" href="/tags/原理/">原理</a>，  <a class="tag-link" href="/tags/原理理解/">原理理解</a>，  <a class="tag-link" href="/tags/技巧/">技巧</a>，  <a class="tag-link" href="/tags/源码剖析/">源码剖析</a>，  <a class="tag-link" href="/tags/环境搭建/">环境搭建</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/bug记录/" style="font-size: 10px;">bug记录</a> <a href="/tags/express/" style="font-size: 10px;">express</a> <a href="/tags/gcd/" style="font-size: 10px;">gcd</a> <a href="/tags/hybrid/" style="font-size: 20px;">hybrid</a> <a href="/tags/ionic/" style="font-size: 18.57px;">ionic</a> <a href="/tags/ios/" style="font-size: 11.43px;">ios</a> <a href="/tags/javascript/" style="font-size: 11.43px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 11.43px;">nodejs</a> <a href="/tags/php/" style="font-size: 10px;">php</a> <a href="/tags/shell/" style="font-size: 11.43px;">shell</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/wechat/" style="font-size: 10px;">wechat</a> <a href="/tags/其他/" style="font-size: 11.43px;">其他</a> <a href="/tags/原理/" style="font-size: 15.71px;">原理</a> <a href="/tags/原理理解/" style="font-size: 14.29px;">原理理解</a> <a href="/tags/技巧/" style="font-size: 12.86px;">技巧</a> <a href="/tags/源码剖析/" style="font-size: 17.14px;">源码剖析</a> <a href="/tags/环境搭建/" style="font-size: 10px;">环境搭建</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">2019年04月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">2019年01月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">2018年12月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">2018年11月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">2018年10月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">2018年08月</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">2018年07月</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/17/2019-04-17-ssh相关命令/">ssh相关命令</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-livereload插件时未导入cordova.js文件错误的解决方式/">livereload插件时未导入cordova .js文件错误的解决方式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-将下载的乱码txt文件转换为utf-8格式/">将下载的乱码txt文件转换为utf-8格式</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-JavaScript 将数组拆分为不定参数列表/">javascript 将数组拆分为不定参数列表</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/16/2019-04-16-252个英语字根、词根/">252个英语字根、词根</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 Shadow如寒灬 &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <span id="busuanzi_container_site_pv">欢迎来访</span>
+  </div>
+</footer>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/nodejs/wechat/ranking-list" class="mobile-nav-link">游戏高分榜</a>
+  
+    <a href="/phpmyadmin" class="mobile-nav-link">数据库</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>
